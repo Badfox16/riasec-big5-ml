@@ -1,3 +1,4 @@
 .env
 .venv
 notebooks/models
+src/api/__pycache__
