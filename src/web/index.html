@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teste Vocacional RIASEC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ COVER -->
+<section id="screen-cover" class="screen active">
+  <div class="cover-inner">
+    <div class="cover-badge">Modelo de Holland · RIASEC</div>
+    <h1>Descobre o teu<br/><span class="gradient-text">perfil vocacional</span></h1>
+    <p class="cover-sub">18 perguntas · 3 minutos · resultado imediato</p>
+    <p class="cover-desc">
+      Com base num modelo treinado sobre <strong>145 000 respondentes</strong>, este teste
+      identifica as tuas dimensões de interesse dominantes e sugere carreiras compatíveis
+      com o teu perfil.
+    </p>
+    <button class="btn-primary btn-lg" onclick="App.start()">Começar o teste →</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ QUESTIONS -->
+<section id="screen-questions" class="screen">
+
+  <header class="q-header">
+    <div class="q-logo">RIASEC</div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      <span id="progress-label" class="progress-label">0 / 18</span>
+    </div>
+  </header>
+
+  <div class="q-body">
+    <!-- dimension card injected by JS -->
+    <div id="dim-card" class="dim-card"></div>
+
+    <div class="q-nav">
+      <button class="btn-ghost" id="btn-prev" onclick="App.prevDim()" disabled>← Anterior</button>
+      <button class="btn-primary" id="btn-next" onclick="App.nextDim()">Próximo →</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ DEMOGRAPHICS -->
+<section id="screen-demo" class="screen">
+  <div class="demo-inner">
+    <div class="step-badge">Opcional · Melhora a precisão</div>
+    <h2>Sobre ti</h2>
+    <p class="demo-sub">Estes dados são usados apenas pela modelo de previsão e não são guardados.</p>
+
+    <div class="demo-fields">
+      <label>
+        Idade
+        <input type="number" id="d-age" min="13" max="100" placeholder="ex: 22" />
+      </label>
+      <label>
+        Género
+        <select id="d-gender">
+          <option value="1">Masculino</option>
+          <option value="2">Feminino</option>
+          <option value="3">Outro / Prefiro não dizer</option>
+        </select>
+      </label>
+      <label>
+        Nível de educação
+        <select id="d-edu">
+          <option value="2">Ensino Secundário</option>
+          <option value="3" selected>Licenciatura</option>
+          <option value="4">Pós-graduação / Mestrado / Doutoramento</option>
+          <option value="1">Menos que o Ensino Secundário</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="demo-actions">
+      <button class="btn-ghost" onclick="App.submitPredict()">Saltar →</button>
+      <button class="btn-primary btn-lg" onclick="App.submitPredict()">Ver o meu perfil →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ LOADING -->
+<section id="screen-loading" class="screen">
+  <div class="loading-inner">
+    <div class="spinner"></div>
+    <p>A calcular o teu perfil…</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════ RESULTS -->
+<section id="screen-results" class="screen">
+  <div class="results-wrap">
+
+    <header class="r-header">
+      <p class="r-eyebrow">O teu perfil Holland</p>
+      <div id="r-code" class="r-code">---</div>
+      <p id="r-code-names" class="r-code-names"></p>
+    </header>
+
+    <div class="results-grid">
+
+      <!-- Radar RIASEC -->
+      <div class="card card-radar">
+        <h3>Perfil RIASEC</h3>
+        <div class="chart-wrap">
+          <canvas id="radar-chart"></canvas>
+        </div>
+        <div id="r-dim-list" class="r-dim-list"></div>
+      </div>
+
+      <!-- Big Five -->
+      <div class="card card-big5">
+        <h3>Traços de Personalidade <span class="badge-small">Big Five</span></h3>
+        <div id="big5-bars" class="big5-bars"></div>
+        <p class="big5-note">Previsão baseada nas respostas ao questionário RIASEC. Escala 1–7.</p>
+      </div>
+
+      <!-- Carreiras -->
+      <div class="card card-careers">
+        <h3>Carreiras sugeridas</h3>
+        <div id="career-list" class="career-list"></div>
+      </div>
+
+    </div>
+
+    <div class="r-footer">
+      <p class="disclaimer">
+        ⚠ Previsão orientativa com base numa amostra de 145 k respondentes.
+        Consulte um psicólogo vocacional para uma avaliação completa.
+      </p>
+      <button class="btn-ghost" onclick="App.restart()">↺ Refazer o teste</button>
+    </div>
+
+  </div>
+</section>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

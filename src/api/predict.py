@@ -40,14 +40,14 @@ _DIM_NAMES: dict[str, str] = {
     "C": "Convencional",
 }
 
-# Itens recolhidos pela API (3 por dimensão)
+# Itens recolhidos pela API (5 por dimensão)
 _API_ITEMS: dict[str, list[str]] = {
-    "R": ["R2", "R4", "R6"],
-    "I": ["I1", "I4", "I7"],
-    "A": ["A2", "A4", "A6"],
-    "S": ["S1", "S5", "S7"],
-    "E": ["E3", "E5", "E7"],
-    "C": ["C1", "C4", "C5"],
+    "R": ["R1", "R2", "R4", "R6", "R8"],
+    "I": ["I1", "I2", "I4", "I5", "I7"],
+    "A": ["A2", "A3", "A4", "A5", "A6"],
+    "S": ["S1", "S2", "S5", "S7", "S8"],
+    "E": ["E1", "E3", "E5", "E6", "E7"],
+    "C": ["C1", "C2", "C4", "C5", "C7"],
 }
 
 # Todos os 48 itens (ordem usada no treino)
