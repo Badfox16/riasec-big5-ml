@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "eiVocação",
+    "slug": "eivocacao-riasec",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#5B4FE8"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "mz.eivocacao.riasec"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#5B4FE8"
+      },
+      "package": "mz.eivocacao.riasec"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

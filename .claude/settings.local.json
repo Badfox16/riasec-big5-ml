@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx expo-env-info:*)",
+      "Bash(npm show:*)",
+      "Bash(node -e \"const d=JSON.parse\\(require\\(''''fs''''\\).readFileSync\\(''''/dev/stdin'''',''''utf8''''\\)\\); console.log\\(d.filter\\(v=>v.startsWith\\(''''18.''''\\)\\).slice\\(-8\\).join\\(''''\\\\n''''\\)\\)\")",
+      "Bash(npx tsc:*)",
+      "Bash(npx expo:*)"
+    ]
+  }
+}
