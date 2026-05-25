@@ -16,8 +16,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from .auth.router import router as auth_router
+from .config import get_settings
+from .db.database import engine
+from .db.models import Base
+from .exams.router import router as exams_router
 from .predict import _load_model, predict
 from .schemas import PredictionResponse, Question, RiasecInput
+
+settings = get_settings()
 
 _WEB_DIR = Path(__file__).parent.parent / "web"
 
@@ -100,7 +107,8 @@ _QUESTIONS: list[Question] = [
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Pré-carrega o modelo no arranque para evitar latência na primeira chamada."""
+    """Pré-carrega o modelo e inicializa a base de dados no arranque."""
+    Base.metadata.create_all(bind=engine)
     try:
         _load_model()
         print("✓ Modelo RIASEC carregado com sucesso.")
@@ -125,12 +133,15 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.allowed_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.mount("/static", StaticFiles(directory=_WEB_DIR), name="static")
+
+app.include_router(auth_router)
+app.include_router(exams_router)
 
 
 # ---------------------------------------------------------------------------

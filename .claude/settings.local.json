@@ -17,7 +17,9 @@
       "PowerShell(& \".\\\\.env\\\\Scripts\\\\python.exe\" -c \"from src.api.course_map import lookup_courses; from src.api.schemas import CourseRecommendation, PredictionResponse; from src.api.predict import predict; print\\('OK'\\)\")",
       "Bash(uvicorn src.api.main:app --port 8000)",
       "Bash(curl -s http://localhost:8000/health)",
-      "Bash(pip show *)"
+      "Bash(pip show *)",
+      "PowerShell(& \"D:\\\\github\\\\riasec-ml\\\\.venv\\\\Scripts\\\\python.exe\" -c \"import pytest; print\\(pytest.__version__\\)\" 2>&1)",
+      "PowerShell(Get-ChildItem \"D:\\\\github\\\\riasec-ml\\\\mobile\\\\\" -Recurse -Name | Where-Object { $_ -notmatch \"node_modules|\\\\.expo\" })"
     ]
   }
 }

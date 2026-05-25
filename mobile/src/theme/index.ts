@@ -1,48 +1,48 @@
-// ─── Design Tokens — Dark Premium Theme ──────────────────────────────────────
+// ─── Design Tokens — Cyan & White Theme ──────────────────────────────────────
 
 export const Colors = {
   // ── Backgrounds ─────────────────────────────────────────────────────────────
-  background:          '#0D0D1A',
-  backgroundAlt:       '#111120',
-  surface:             '#161628',
-  card:                '#1C1C32',
-  cardHighlight:       '#242440',
+  background:          '#06101F',
+  backgroundAlt:       '#0A1628',
+  surface:             '#0D1E33',
+  card:                '#122540',
+  cardHighlight:       '#173050',
   overlay:             'rgba(0,0,0,0.7)',
 
-  // ── Brand Purple ─────────────────────────────────────────────────────────────
-  primary:             '#7C3AED',
-  primaryLight:        '#A78BFA',
-  primaryDark:         '#5B21B6',
-  primaryGradient:     ['#8B5CF6', '#6D28D9'] as [string, string],
-  primaryGlow:         'rgba(139,92,246,0.35)',
+  // ── Brand Cyan ──────────────────────────────────────────────────────────────
+  primary:             '#06B6D4',
+  primaryLight:        '#67E8F9',
+  primaryDark:         '#0891B2',
+  primaryGradient:     ['#22D3EE', '#0891B2'] as [string, string],
+  primaryGlow:         'rgba(6,182,212,0.35)',
 
-  // ── Accent Teal ──────────────────────────────────────────────────────────────
-  accent:              '#06D6A0',
-  accentLight:         '#34EFC4',
-  accentGradient:      ['#06D6A0', '#0EA5E9'] as [string, string],
-  accentGlow:          'rgba(6,214,160,0.25)',
+  // ── Accent White ────────────────────────────────────────────────────────────
+  accent:              '#E0F7FA',
+  accentLight:         '#FFFFFF',
+  accentGradient:      ['#67E8F9', '#F0F9FF'] as [string, string],
+  accentGlow:          'rgba(224,247,250,0.2)',
 
   // ── Borders ──────────────────────────────────────────────────────────────────
-  border:              'rgba(255,255,255,0.07)',
-  borderActive:        'rgba(255,255,255,0.18)',
-  borderSubtle:        'rgba(255,255,255,0.04)',
+  border:              'rgba(6,182,212,0.18)',
+  borderActive:        'rgba(6,182,212,0.45)',
+  borderSubtle:        'rgba(6,182,212,0.07)',
 
   // ── Text ─────────────────────────────────────────────────────────────────────
-  text:                '#FFFFFF',
-  textSecondary:       'rgba(255,255,255,0.62)',
-  textMuted:           'rgba(255,255,255,0.35)',
-  textDisabled:        'rgba(255,255,255,0.18)',
-  textInverse:         '#0D0D1A',
+  text:                '#F0F9FF',
+  textSecondary:       'rgba(240,249,255,0.65)',
+  textMuted:           'rgba(240,249,255,0.38)',
+  textDisabled:        'rgba(240,249,255,0.2)',
+  textInverse:         '#06101F',
 
   // ── Semantic ─────────────────────────────────────────────────────────────────
-  success:             '#06D6A0',
-  successBg:           'rgba(6,214,160,0.12)',
+  success:             '#34D399',
+  successBg:           'rgba(52,211,153,0.12)',
   warning:             '#FBBF24',
   warningBg:           'rgba(251,191,36,0.12)',
   error:               '#F87171',
   errorBg:             'rgba(248,113,113,0.12)',
-  info:                '#38BDF8',
-  infoBg:              'rgba(56,189,248,0.12)',
+  info:                '#22D3EE',
+  infoBg:              'rgba(34,211,238,0.12)',
 
   // ── RIASEC Dimensions ────────────────────────────────────────────────────────
   riasec: {
@@ -76,16 +76,16 @@ export const Colors = {
   big5: {
     extraversion:      '#FB923C',
     agreeableness:     '#34D399',
-    conscientiousness: '#818CF8',
+    conscientiousness: '#22D3EE',
     neuroticism:       '#F87171',
     openness:          '#E879F9',
   },
 
   // ── Tab Bar ──────────────────────────────────────────────────────────────────
-  tabActive:           '#A78BFA',
-  tabInactive:         'rgba(255,255,255,0.32)',
-  tabBackground:       '#13131F',
-  tabBorder:           'rgba(255,255,255,0.06)',
+  tabActive:           '#22D3EE',
+  tabInactive:         'rgba(240,249,255,0.32)',
+  tabBackground:       '#091422',
+  tabBorder:           'rgba(6,182,212,0.12)',
 };
 
 export const Spacing = {
@@ -143,14 +143,14 @@ export const Shadow = {
     elevation: 12,
   },
   primary: {
-    shadowColor: '#7C3AED',
+    shadowColor: '#06B6D4',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.5,
     shadowRadius: 20,
     elevation: 10,
   },
   accent: {
-    shadowColor: '#06D6A0',
+    shadowColor: '#67E8F9',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.4,
     shadowRadius: 16,

@@ -1,69 +1,123 @@
-// ─── Assessment Store (Zustand) ───────────────────────────────────────────────
+// ─── Assessment Store (Zustand + AsyncStorage) ────────────────────────────────
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { Demographics, PredictionResponse, AssessmentRecord } from '../types';
+import { createJSONStorage, persist } from 'zustand/middleware';
+
+import { AssessmentRecord, Demographics, PredictionResponse } from '../types';
+import { fetchExamsApi, saveExamApi, deleteExamApi } from '../services/api';
 
 interface AssessmentState {
-  // Current session
   answers:      Record<string, number>;
   demographics: Demographics | null;
   results:      PredictionResponse | null;
+  history:      AssessmentRecord[];
+  isSyncing:    boolean;
 
-  // History (persisted in memory; add AsyncStorage for durability)
-  history: AssessmentRecord[];
-
-  // ── Mutators ──────────────────────────────────────────────────────────────
   setAnswer:      (code: string, value: number) => void;
   setDemographics:(data: Demographics) => void;
   setResults:     (results: PredictionResponse) => void;
-  saveToHistory:  () => void;
   reset:          () => void;
 
-  // ── Derived helpers ───────────────────────────────────────────────────────
+  // Guarda local imediatamente; se token disponível envia ao servidor em background
+  saveToHistory:  (token?: string | null) => Promise<void>;
+  // Substitui history[] com dados do servidor
+  syncFromServer: (token: string) => Promise<void>;
+  // Apaga local e no servidor se autenticado
+  deleteRecord:   (id: string, token?: string | null) => Promise<void>;
+
   getAnswersForDimension:    (dimension: string) => Record<string, number>;
   getDimensionAnsweredCount: (dimension: string) => number;
   getTotalAnswered:          () => number;
   isComplete:                () => boolean;
 }
 
-export const useAssessmentStore = create<AssessmentState>((set, get) => ({
-  answers:      {},
-  demographics: null,
-  results:      null,
-  history:      [],
+export const useAssessmentStore = create<AssessmentState>()(
+  persist(
+    (set, get) => ({
+      answers:      {},
+      demographics: null,
+      results:      null,
+      history:      [],
+      isSyncing:    false,
 
-  setAnswer: (code, value) =>
-    set(s => ({ answers: { ...s.answers, [code]: value } })),
+      setAnswer: (code, value) =>
+        set(s => ({ answers: { ...s.answers, [code]: value } })),
 
-  setDemographics: (data) => set({ demographics: data }),
+      setDemographics: (data) => set({ demographics: data }),
 
-  setResults: (results) => set({ results }),
+      setResults: (results) => set({ results }),
 
-  saveToHistory: () => {
-    const { results, demographics, history } = get();
-    if (!results) return;
-    const record: AssessmentRecord = {
-      id:           Date.now().toString(),
-      date:         new Date().toISOString(),
-      demographics: demographics ?? undefined,
-      ...results,
-    };
-    set({ history: [record, ...history] });
-  },
+      reset: () => set({ answers: {}, demographics: null, results: null }),
 
-  reset: () => set({ answers: {}, demographics: null, results: null }),
+      saveToHistory: async (token) => {
+        const { results, demographics, history } = get();
+        if (!results) return;
 
-  getAnswersForDimension: (dimension) => {
-    const { answers } = get();
-    return Object.fromEntries(
-      Object.entries(answers).filter(([key]) => key.startsWith(dimension)),
-    );
-  },
+        // 1. Guardar local imediatamente (offline-first)
+        const localId = Date.now().toString();
+        const localRecord: AssessmentRecord = {
+          id:           localId,
+          date:         new Date().toISOString(),
+          demographics: demographics ?? undefined,
+          ...results,
+        };
+        set({ history: [localRecord, ...history] });
 
-  getDimensionAnsweredCount: (dimension) =>
-    Object.keys(get().getAnswersForDimension(dimension)).length,
+        // 2. Sincronizar com servidor se autenticado
+        if (token) {
+          set({ isSyncing: true });
+          try {
+            const serverRecord = await saveExamApi(token, results, demographics);
+            set(s => ({
+              history: s.history.map(r => r.id === localId ? serverRecord : r),
+              isSyncing: false,
+            }));
+          } catch {
+            set({ isSyncing: false });
+          }
+        }
+      },
 
-  getTotalAnswered: () => Object.keys(get().answers).length,
+      syncFromServer: async (token) => {
+        set({ isSyncing: true });
+        try {
+          const serverHistory = await fetchExamsApi(token);
+          set({ history: serverHistory, isSyncing: false });
+        } catch {
+          set({ isSyncing: false });
+        }
+      },
 
-  isComplete: () => Object.keys(get().answers).length >= 30,
-}));
+      deleteRecord: async (id, token) => {
+        set(s => ({ history: s.history.filter(r => r.id !== id) }));
+        if (token) {
+          try {
+            await deleteExamApi(token, id);
+          } catch {
+            // Ignorar erros de rede; já apagado localmente
+          }
+        }
+      },
+
+      getAnswersForDimension: (dimension) => {
+        const { answers } = get();
+        return Object.fromEntries(
+          Object.entries(answers).filter(([key]) => key.startsWith(dimension)),
+        );
+      },
+
+      getDimensionAnsweredCount: (dimension) =>
+        Object.keys(get().getAnswersForDimension(dimension)).length,
+
+      getTotalAnswered: () => Object.keys(get().answers).length,
+
+      isComplete: () => Object.keys(get().answers).length >= 30,
+    }),
+    {
+      name:    'assessment-store',
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (s) => ({ history: s.history }),
+    },
+  ),
+);

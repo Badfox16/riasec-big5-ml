@@ -11,6 +11,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { AppStackParamList } from '../../types';
 import { useAssessmentStore } from '../../store/useAssessmentStore';
+import { useAuthStore } from '../../store/useAuthStore';
 import { predict } from '../../services/api';
 import { Colors, Spacing, Radius, Typography } from '../../theme';
 
@@ -26,6 +27,7 @@ const STEPS = [
 export default function LoadingScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
   const { answers, demographics, setResults, saveToHistory } = useAssessmentStore();
+  const token = useAuthStore(s => s.token);
 
   const [stepIndex, setStepIndex]   = useState(0);
   const [errorMsg,  setErrorMsg]    = useState<string | null>(null);
@@ -87,7 +89,7 @@ export default function LoadingScreen({ navigation }: Props) {
         Animated.timing(progressAnim, { toValue: 1, duration: 400, useNativeDriver: false }).start();
 
         setResults(result);
-        saveToHistory();
+        await saveToHistory(token);
         setIsDone(true);
 
         // Success animation before navigating

@@ -2,11 +2,12 @@
 // Auth stack  → shown when user is not logged in
 // App stack   → shown when user is logged in (tabs + assessment full-screen flow)
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { useAuthStore }  from '../store/useAuthStore';
+import { useAuthStore }       from '../store/useAuthStore';
+import { useAssessmentStore } from '../store/useAssessmentStore';
 import { AuthStackParamList, AppStackParamList } from '../types';
 
 // Navigators
@@ -94,7 +95,16 @@ function AppNavigator() {
 // ── Root ─────────────────────────────────────────────────────────────────────
 
 export default function RootNavigator() {
-  const user = useAuthStore(s => s.user);
+  const user           = useAuthStore(s => s.user);
+  const token          = useAuthStore(s => s.token);
+  const rehydrate      = useAuthStore(s => s.rehydrate);
+  const syncFromServer = useAssessmentStore(s => s.syncFromServer);
+
+  useEffect(() => {
+    rehydrate().then(() => {
+      if (token) syncFromServer(token);
+    });
+  }, []);
 
   return (
     <NavigationContainer>

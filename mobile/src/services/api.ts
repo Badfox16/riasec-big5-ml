@@ -1,15 +1,13 @@
 // ─── API Service Layer ─────────────────────────────────────────────────────────
-// Ready to connect to the FastAPI backend.
-// Switch BASE_URL to your server address to go live.
 
-import { PredictionResponse, Demographics } from '../types';
+import { AssessmentRecord, Demographics, PredictionResponse } from '../types';
 
 // ── Config ────────────────────────────────────────────────────────────────────
-const BASE_URL = 'http://localhost:8000'; // Change to production URL
 
-const DEFAULT_TIMEOUT = 15000; // 15s
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8000';
+const DEFAULT_TIMEOUT = 15000;
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Core helpers ──────────────────────────────────────────────────────────────
 
 async function request<T>(
   path: string,
@@ -31,6 +29,7 @@ async function request<T>(
       throw new ApiError(res.status, body?.detail ?? `HTTP ${res.status}`);
     }
 
+    if (res.status === 204) return undefined as T;
     return res.json() as Promise<T>;
   } catch (err: any) {
     if (err.name === 'AbortError') throw new ApiError(408, 'Pedido expirou. Verifica a tua ligação.');
@@ -41,6 +40,20 @@ async function request<T>(
   }
 }
 
+async function authRequest<T>(
+  path: string,
+  token: string,
+  options: RequestInit = {},
+): Promise<T> {
+  return request<T>(path, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ...options.headers,
+    },
+  });
+}
+
 export class ApiError extends Error {
   constructor(public status: number, message: string) {
     super(message);
@@ -48,14 +61,12 @@ export class ApiError extends Error {
   }
 }
 
-// ── Endpoints ─────────────────────────────────────────────────────────────────
+// ── Public endpoints ──────────────────────────────────────────────────────────
 
-/** GET /health — check if API is reachable and model is loaded */
 export async function checkHealth(): Promise<{ status: string; modelo_carregado: boolean }> {
   return request('/health');
 }
 
-/** GET /questions — fetch all 30 RIASEC items from the server */
 export async function fetchQuestions() {
   return request<Array<{
     id: number;
@@ -69,63 +80,82 @@ export async function fetchQuestions() {
   }>>('/questions');
 }
 
-/**
- * POST /predict — submit RIASEC answers + optional demographics
- * and receive Holland code, Big Five, and career suggestions.
- */
 export async function predict(
   answers: Record<string, number>,
   demographics?: Demographics | null,
 ): Promise<PredictionResponse> {
   const body: Record<string, number> = { ...answers };
-
   if (demographics) {
     body.age       = demographics.age;
     body.gender    = demographics.gender;
     body.education = demographics.education;
   }
-
   return request<PredictionResponse>('/predict', {
     method: 'POST',
     body: JSON.stringify(body),
   });
 }
 
-// ── Auth (mocked — no backend endpoints yet) ──────────────────────────────────
-// These functions simulate network latency for realistic UX.
-// Replace with real endpoints when auth is implemented on the backend.
+// ── Auth ──────────────────────────────────────────────────────────────────────
 
-export async function mockLogin(email: string, _password: string) {
-  await delay(1200);
-  if (!email.includes('@')) throw new ApiError(400, 'Email inválido.');
-  return {
-    token: 'mock-jwt-token-' + Math.random().toString(36).slice(2),
-    user: {
-      id:        'user-1',
-      name:      email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-      email,
-      createdAt: new Date().toISOString(),
-    },
-  };
+export interface AuthResponse {
+  token: string;
+  user: { id: number; name: string; email: string; created_at: string };
 }
 
-export async function mockRegister(name: string, email: string, _password: string) {
-  await delay(1400);
-  if (!email.includes('@')) throw new ApiError(400, 'Email inválido.');
-  if (name.trim().length < 2) throw new ApiError(400, 'Nome muito curto.');
-  return {
-    token: 'mock-jwt-token-' + Math.random().toString(36).slice(2),
-    user: {
-      id:        'user-' + Math.random().toString(36).slice(2),
-      name:      name.trim(),
-      email,
-      createdAt: new Date().toISOString(),
-    },
-  };
+export async function loginApi(email: string, password: string): Promise<AuthResponse> {
+  return request<AuthResponse>('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
 }
 
-// ── Utils ─────────────────────────────────────────────────────────────────────
+export async function registerApi(
+  name: string,
+  email: string,
+  password: string,
+): Promise<AuthResponse> {
+  return request<AuthResponse>('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ name, email, password }),
+  });
+}
 
-function delay(ms: number) {
-  return new Promise<void>(res => setTimeout(res, ms));
+export async function getMeApi(
+  token: string,
+): Promise<AuthResponse['user']> {
+  return authRequest('/auth/me', token);
+}
+
+// ── Exames ────────────────────────────────────────────────────────────────────
+
+export async function fetchExamsApi(token: string): Promise<AssessmentRecord[]> {
+  const raw = await authRequest<any[]>('/exams', token);
+  return raw.map(e => ({
+    ...e,
+    id:   String(e.id),
+    date: e.date,
+  }));
+}
+
+export async function saveExamApi(
+  token: string,
+  result: PredictionResponse,
+  demographics?: Demographics | null,
+): Promise<AssessmentRecord> {
+  const body = {
+    ...result,
+    age:       demographics?.age       ?? null,
+    gender:    demographics?.gender    ?? null,
+    education: demographics?.education ?? null,
+  };
+  const saved = await authRequest<any>('/exams', token, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
+  return { ...saved, id: String(saved.id), date: saved.date };
+}
+
+export async function deleteExamApi(token: string, examId: string): Promise<void> {
+  await authRequest(`/exams/${examId}`, token, { method: 'DELETE' });
 }
