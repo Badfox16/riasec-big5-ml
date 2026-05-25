@@ -14,6 +14,7 @@ import { Colors, Radius, Shadow, Spacing, Typography } from '../theme';
 import RadarChart   from '../components/RadarChart';
 import BigFiveBar   from '../components/BigFiveBar';
 import CareerCard   from '../components/CareerCard';
+import CourseCard   from '../components/CourseCard';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Results'>;
 
@@ -35,7 +36,7 @@ export default function ResultsScreen({ navigation }: Props) {
 
   if (!results) return null;
 
-  const { holland_code, riasec_scores, big5, careers, nota } = results;
+  const { holland_code, riasec_scores, big5, courses, careers, nota } = results;
 
   // Sort scores descending for display
   const sortedScores = [...riasec_scores].sort((a, b) => b.score - a.score);
@@ -118,6 +119,26 @@ export default function ResultsScreen({ navigation }: Props) {
           ))}
         </View>
 
+        {/* ── Courses ──────────────────────────────────────────────────── */}
+        <View style={[styles.card, Shadow.sm]}>
+          <Text style={styles.cardTitle}>Cursos Recomendados</Text>
+          <Text style={styles.cardSub}>
+            Cursos superiores em universidades moçambicanas compatíveis com o código{' '}
+            <Text style={{ color: Colors.riasec[topDims[0]] ?? Colors.primary, fontWeight: '700' }}>{holland_code}</Text>
+          </Text>
+
+          <View style={styles.careersWrap}>
+            {courses.map((course, i) => (
+              <CourseCard
+                key={i}
+                course={course}
+                index={i}
+                accentColor={Colors.riasec[topDims[0]] ?? Colors.primary}
+              />
+            ))}
+          </View>
+        </View>
+
         {/* ── Big Five ──────────────────────────────────────────────────── */}
         <View style={[styles.card, Shadow.sm]}>
           <Text style={styles.cardTitle}>Personalidade Big Five</Text>
@@ -137,9 +158,10 @@ export default function ResultsScreen({ navigation }: Props) {
 
         {/* ── Careers ──────────────────────────────────────────────────── */}
         <View style={[styles.card, Shadow.sm]}>
-          <Text style={styles.cardTitle}>Carreiras Sugeridas</Text>
+          <Text style={styles.cardTitle}>Possíveis Saídas Profissionais</Text>
           <Text style={styles.cardSub}>
-            Alinhadas com o teu código <Text style={{ color: Colors.primary, fontWeight: '700' }}>{holland_code}</Text>
+            Áreas de emprego associadas ao código{' '}
+            <Text style={{ color: Colors.primary, fontWeight: '700' }}>{holland_code}</Text>
           </Text>
 
           <View style={styles.careersWrap}>

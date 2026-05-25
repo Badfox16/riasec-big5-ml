@@ -16,6 +16,7 @@ import { Colors, Spacing, Radius, Typography, Shadow } from '../../theme';
 import RadarChart from '../../components/RadarChart';
 import BigFiveBar from '../../components/BigFiveBar';
 import CareerCard from '../../components/CareerCard';
+import CourseCard from '../../components/CourseCard';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Results'>;
 
@@ -37,23 +38,25 @@ export default function ResultsScreen({ navigation }: Props) {
   const { results, reset } = useAssessmentStore();
 
   // Section animations
-  const heroAnim    = useRef(new Animated.Value(0)).current;
+  const heroAnim     = useRef(new Animated.Value(0)).current;
   const section1Anim = useRef(new Animated.Value(40)).current;
   const section2Anim = useRef(new Animated.Value(40)).current;
   const section3Anim = useRef(new Animated.Value(40)).current;
+  const section4Anim = useRef(new Animated.Value(40)).current;
 
   useEffect(() => {
     Animated.stagger(150, [
-      Animated.spring(heroAnim,    { toValue: 1, tension: 60, friction: 10, useNativeDriver: true }),
-      Animated.spring(section1Anim,{ toValue: 0, tension: 50, friction: 10, useNativeDriver: true }),
-      Animated.spring(section2Anim,{ toValue: 0, tension: 50, friction: 10, useNativeDriver: true }),
-      Animated.spring(section3Anim,{ toValue: 0, tension: 50, friction: 10, useNativeDriver: true }),
+      Animated.spring(heroAnim,     { toValue: 1, tension: 60, friction: 10, useNativeDriver: true }),
+      Animated.spring(section1Anim, { toValue: 0, tension: 50, friction: 10, useNativeDriver: true }),
+      Animated.spring(section2Anim, { toValue: 0, tension: 50, friction: 10, useNativeDriver: true }),
+      Animated.spring(section3Anim, { toValue: 0, tension: 50, friction: 10, useNativeDriver: true }),
+      Animated.spring(section4Anim, { toValue: 0, tension: 50, friction: 10, useNativeDriver: true }),
     ]).start();
   }, []);
 
   if (!results) return null;
 
-  const { holland_code, riasec_scores, big5, careers, nota } = results;
+  const { holland_code, riasec_scores, big5, courses, careers, nota } = results;
   const topLetter    = holland_code[0];
   const accentColor  = Colors.riasec[topLetter] ?? Colors.primary;
   const accentGrad   = Colors.riasecGradient[topLetter] ?? Colors.primaryGradient;
@@ -150,13 +153,36 @@ export default function ResultsScreen({ navigation }: Props) {
           ))}
         </Animated.View>
 
-        {/* ── Big Five Section ───────────────────────────────────────────── */}
+        {/* ── Courses Section ────────────────────────────────────────────── */}
         <Animated.View
           style={[
             styles.card,
             {
               transform: [{ translateY: section2Anim }],
               opacity: section2Anim.interpolate({ inputRange: [0, 40], outputRange: [1, 0] }),
+            },
+          ]}
+        >
+          <Text style={styles.cardTitle}>Cursos Recomendados</Text>
+          <Text style={styles.cardSub}>
+            Cursos superiores em universidades moçambicanas compatíveis com o código{' '}
+            <Text style={{ color: accentColor, fontWeight: '800' }}>{holland_code}</Text>
+          </Text>
+
+          <View style={styles.careersWrap}>
+            {courses.map((c, i) => (
+              <CourseCard key={i} course={c} index={i} accentColor={accentColor} />
+            ))}
+          </View>
+        </Animated.View>
+
+        {/* ── Big Five Section ───────────────────────────────────────────── */}
+        <Animated.View
+          style={[
+            styles.card,
+            {
+              transform: [{ translateY: section3Anim }],
+              opacity: section3Anim.interpolate({ inputRange: [0, 40], outputRange: [1, 0] }),
             },
           ]}
         >
@@ -180,14 +206,14 @@ export default function ResultsScreen({ navigation }: Props) {
           style={[
             styles.card,
             {
-              transform: [{ translateY: section3Anim }],
-              opacity: section3Anim.interpolate({ inputRange: [0, 40], outputRange: [1, 0] }),
+              transform: [{ translateY: section4Anim }],
+              opacity: section4Anim.interpolate({ inputRange: [0, 40], outputRange: [1, 0] }),
             },
           ]}
         >
-          <Text style={styles.cardTitle}>Carreiras Sugeridas</Text>
+          <Text style={styles.cardTitle}>Possíveis Saídas Profissionais</Text>
           <Text style={styles.cardSub}>
-            Compatíveis com o código{' '}
+            Áreas de emprego associadas ao código{' '}
             <Text style={{ color: accentColor, fontWeight: '800' }}>{holland_code}</Text>
           </Text>
 

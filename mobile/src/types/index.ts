@@ -41,6 +41,12 @@ export interface Big5Prediction {
   openness: number;
 }
 
+export interface CourseRecommendation {
+  titulo: string;
+  instituicao: string;
+  descricao: string;
+}
+
 export interface CareerSuggestion {
   titulo: string;
   descricao: string;
@@ -50,6 +56,7 @@ export interface PredictionResponse {
   holland_code: string;
   riasec_scores: DimensionScore[];
   big5: Big5Prediction;
+  courses: CourseRecommendation[];
   careers: CareerSuggestion[];
   nota: string;
 }
@@ -83,6 +90,7 @@ export interface AssessmentRecord {
   holland_code: string;
   riasec_scores: DimensionScore[];
   big5: Big5Prediction;
+  courses: CourseRecommendation[];
   careers: CareerSuggestion[];
   nota: string;
   demographics?: Demographics;

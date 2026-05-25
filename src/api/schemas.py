@@ -102,6 +102,12 @@ class Big5Prediction(BaseModel):
     openness: float
 
 
+class CourseRecommendation(BaseModel):
+    titulo: str
+    instituicao: str
+    descricao: str
+
+
 class CareerSuggestion(BaseModel):
     titulo: str
     descricao: str
@@ -111,6 +117,7 @@ class PredictionResponse(BaseModel):
     holland_code: str = Field(..., description="Código Holland de 3 letras (ex: ISA)")
     riasec_scores: list[DimensionScore]
     big5: Big5Prediction
+    courses: list[CourseRecommendation]
     careers: list[CareerSuggestion]
     nota: str = Field(
         default=(

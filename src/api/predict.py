@@ -16,9 +16,11 @@ import numpy as np
 import pandas as pd
 
 from .career_map import DIMENSION_DESCRIPTIONS, lookup_careers
+from .course_map import lookup_courses
 from .schemas import (
     Big5Prediction,
     CareerSuggestion,
+    CourseRecommendation,
     DimensionScore,
     PredictionResponse,
     RiasecInput,
@@ -172,6 +174,9 @@ def predict(payload: RiasecInput) -> PredictionResponse:
         for d in "RIASEC"
     ]
 
+    courses_raw = lookup_courses(holland_code)
+    courses = [CourseRecommendation(**c) for c in courses_raw]
+
     careers_raw = lookup_careers(holland_code)
     careers = [CareerSuggestion(**c) for c in careers_raw]
 
@@ -179,5 +184,6 @@ def predict(payload: RiasecInput) -> PredictionResponse:
         holland_code=holland_code,
         riasec_scores=riasec_scores,
         big5=Big5Prediction(**big5_dict),
+        courses=courses,
         careers=careers,
     )
