@@ -111,9 +111,9 @@ async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
     try:
         _load_model()
-        print("✓ Modelo RIASEC carregado com sucesso.")
+        print("[OK] Modelo RIASEC carregado com sucesso.")
     except FileNotFoundError as exc:
-        print(f"⚠  {exc}")
+        print(f"[AVISO] {exc}")
     yield
 
 
