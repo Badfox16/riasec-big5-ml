@@ -14,7 +14,10 @@
       "PowerShell(Get-ChildItem -Path 'D:\\\\github\\\\riasec-ml' -Recurse -Exclude '.env','node_modules','.git','__pycache__' -ErrorAction SilentlyContinue | Where-Object { $_.Extension -in '.py','.md','.csv','.txt','.json','.yml','.yaml','.ipynb' -or $_.PSIsContainer } | ForEach-Object { $_.FullName.Replace\\('D:\\\\github\\\\riasec-ml\\\\', ''\\) } | Sort-Object | Select-Object -First 100)",
       "Bash(python *)",
       "Bash(.env\\\\Scripts\\\\python.exe *)",
-      "PowerShell(& \".\\\\.env\\\\Scripts\\\\python.exe\" -c \"from src.api.course_map import lookup_courses; from src.api.schemas import CourseRecommendation, PredictionResponse; from src.api.predict import predict; print\\('OK'\\)\")"
+      "PowerShell(& \".\\\\.env\\\\Scripts\\\\python.exe\" -c \"from src.api.course_map import lookup_courses; from src.api.schemas import CourseRecommendation, PredictionResponse; from src.api.predict import predict; print\\('OK'\\)\")",
+      "Bash(uvicorn src.api.main:app --port 8000)",
+      "Bash(curl -s http://localhost:8000/health)",
+      "Bash(pip show *)"
     ]
   }
 }
