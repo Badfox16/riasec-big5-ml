@@ -2,7 +2,7 @@
 API FastAPI — Previsão Vocacional RIASEC / Modelo de Holland
 ============================================================
 Endpoints:
-  GET  /questions  → lista das 18 perguntas RIASEC
+  GET  /questions  → lista das 48 perguntas RIASEC
   POST /predict    → previsão de perfil vocacional (código Holland + Big Five + carreiras)
   GET  /health     → estado da API e disponibilidade do modelo
 """
@@ -37,7 +37,7 @@ settings = get_settings()
 _WEB_DIR = Path(__file__).parent.parent / "web"
 
 # ---------------------------------------------------------------------------
-# Lista estática de perguntas (30 itens, 5 por dimensão)
+# Lista estática de perguntas (48 itens, 8 por dimensão)
 # ---------------------------------------------------------------------------
 
 _QUESTIONS: list[Question] = [
@@ -46,67 +46,103 @@ _QUESTIONS: list[Question] = [
              text="Verificar a qualidade de peças antes da expedição"),
     Question(id=2,  code="R2", dimension="R", dimension_name="Realista",
              text="Assentar tijolos ou azulejos"),
-    Question(id=3,  code="R4", dimension="R", dimension_name="Realista",
+    Question(id=3,  code="R3", dimension="R", dimension_name="Realista",
+             text="Trabalhar num projeto de construção ao ar livre"),
+    Question(id=4,  code="R4", dimension="R", dimension_name="Realista",
              text="Montar componentes eletrónicos"),
-    Question(id=4,  code="R6", dimension="R", dimension_name="Realista",
+    Question(id=5,  code="R5", dimension="R", dimension_name="Realista",
+             text="Conduzir um autocarro ou caminhão"),
+    Question(id=6,  code="R6", dimension="R", dimension_name="Realista",
              text="Reparar uma torneira avariada"),
-    Question(id=5,  code="R8", dimension="R", dimension_name="Realista",
+    Question(id=7,  code="R7", dimension="R", dimension_name="Realista",
+             text="Reparar uma caldeira ou sistema de aquecimento"),
+    Question(id=8,  code="R8", dimension="R", dimension_name="Realista",
              text="Instalar pavimento em casas"),
     # ── Investigative ──────────────────────────────────────────────────────
-    Question(id=6,  code="I1", dimension="I", dimension_name="Investigativo",
+    Question(id=9,  code="I1", dimension="I", dimension_name="Investigativo",
              text="Estudar a estrutura do corpo humano"),
-    Question(id=7,  code="I2", dimension="I", dimension_name="Investigativo",
+    Question(id=10, code="I2", dimension="I", dimension_name="Investigativo",
              text="Estudar o comportamento animal"),
-    Question(id=8,  code="I4", dimension="I", dimension_name="Investigativo",
+    Question(id=11, code="I3", dimension="I", dimension_name="Investigativo",
+             text="Realizar levantamentos geológicos de campo"),
+    Question(id=12, code="I4", dimension="I", dimension_name="Investigativo",
              text="Desenvolver um novo tratamento médico"),
-    Question(id=9,  code="I5", dimension="I", dimension_name="Investigativo",
+    Question(id=13, code="I5", dimension="I", dimension_name="Investigativo",
              text="Conduzir investigação biológica"),
-    Question(id=10, code="I7", dimension="I", dimension_name="Investigativo",
+    Question(id=14, code="I6", dimension="I", dimension_name="Investigativo",
+             text="Estudar formas de reduzir a poluição da água"),
+    Question(id=15, code="I7", dimension="I", dimension_name="Investigativo",
              text="Trabalhar num laboratório de biologia"),
+    Question(id=16, code="I8", dimension="I", dimension_name="Investigativo",
+             text="Investigar a estrutura das moléculas"),
     # ── Artistic ───────────────────────────────────────────────────────────
-    Question(id=11, code="A2", dimension="A", dimension_name="Artístico",
+    Question(id=17, code="A1", dimension="A", dimension_name="Artístico",
+             text="Fazer esboços, desenhos ou pinturas"),
+    Question(id=18, code="A2", dimension="A", dimension_name="Artístico",
              text="Dirigir uma peça de teatro"),
-    Question(id=12, code="A3", dimension="A", dimension_name="Artístico",
-             text="Criar ilustrações para revistas"),
-    Question(id=13, code="A4", dimension="A", dimension_name="Artístico",
+    Question(id=19, code="A3", dimension="A", dimension_name="Artístico",
+             text="Criar ilustrações para revistas ou livros"),
+    Question(id=20, code="A4", dimension="A", dimension_name="Artístico",
              text="Compor uma música"),
-    Question(id=14, code="A5", dimension="A", dimension_name="Artístico",
+    Question(id=21, code="A5", dimension="A", dimension_name="Artístico",
              text="Escrever livros ou peças de teatro"),
-    Question(id=15, code="A6", dimension="A", dimension_name="Artístico",
+    Question(id=22, code="A6", dimension="A", dimension_name="Artístico",
              text="Tocar um instrumento musical"),
+    Question(id=23, code="A7", dimension="A", dimension_name="Artístico",
+             text="Interpretar jazz ou música clássica em público"),
+    Question(id=24, code="A8", dimension="A", dimension_name="Artístico",
+             text="Atuar num filme ou peça de teatro"),
     # ── Social ─────────────────────────────────────────────────────────────
-    Question(id=16, code="S1", dimension="S", dimension_name="Social",
+    Question(id=25, code="S1", dimension="S", dimension_name="Social",
              text="Dar orientação de carreira às pessoas"),
-    Question(id=17, code="S2", dimension="S", dimension_name="Social",
+    Question(id=26, code="S2", dimension="S", dimension_name="Social",
              text="Fazer voluntariado numa organização sem fins lucrativos"),
-    Question(id=18, code="S5", dimension="S", dimension_name="Social",
+    Question(id=27, code="S3", dimension="S", dimension_name="Social",
+             text="Ajudar pessoas com problemas de álcool ou drogas"),
+    Question(id=28, code="S4", dimension="S", dimension_name="Social",
+             text="Dar aulas numa escola primária"),
+    Question(id=29, code="S5", dimension="S", dimension_name="Social",
              text="Ajudar pessoas com problemas familiares"),
-    Question(id=19, code="S7", dimension="S", dimension_name="Social",
+    Question(id=30, code="S6", dimension="S", dimension_name="Social",
+             text="Prestar cuidados de enfermagem num hospital"),
+    Question(id=31, code="S7", dimension="S", dimension_name="Social",
              text="Ensinar crianças a ler"),
-    Question(id=20, code="S8", dimension="S", dimension_name="Social",
+    Question(id=32, code="S8", dimension="S", dimension_name="Social",
              text="Ajudar idosos nas suas atividades diárias"),
     # ── Enterprising ───────────────────────────────────────────────────────
-    Question(id=21, code="E1", dimension="E", dimension_name="Empreendedor",
+    Question(id=33, code="E1", dimension="E", dimension_name="Empreendedor",
              text="Vender franchisings de restaurantes"),
-    Question(id=22, code="E3", dimension="E", dimension_name="Empreendedor",
+    Question(id=34, code="E2", dimension="E", dimension_name="Empreendedor",
+             text="Gerir um estabelecimento comercial"),
+    Question(id=35, code="E3", dimension="E", dimension_name="Empreendedor",
              text="Gerir as operações de um hotel"),
-    Question(id=23, code="E5", dimension="E", dimension_name="Empreendedor",
+    Question(id=36, code="E4", dimension="E", dimension_name="Empreendedor",
+             text="Gerir um salão de beleza ou barbearia"),
+    Question(id=37, code="E5", dimension="E", dimension_name="Empreendedor",
              text="Dirigir um departamento numa grande empresa"),
-    Question(id=24, code="E6", dimension="E", dimension_name="Empreendedor",
+    Question(id=38, code="E6", dimension="E", dimension_name="Empreendedor",
              text="Gerir uma loja de roupa"),
-    Question(id=25, code="E7", dimension="E", dimension_name="Empreendedor",
+    Question(id=39, code="E7", dimension="E", dimension_name="Empreendedor",
              text="Vender imóveis"),
+    Question(id=40, code="E8", dimension="E", dimension_name="Empreendedor",
+             text="Vender serviços financeiros como seguros ou fundos"),
     # ── Conventional ───────────────────────────────────────────────────────
-    Question(id=26, code="C1", dimension="C", dimension_name="Convencional",
+    Question(id=41, code="C1", dimension="C", dimension_name="Convencional",
              text="Gerar folhas de pagamento mensais"),
-    Question(id=27, code="C2", dimension="C", dimension_name="Convencional",
+    Question(id=42, code="C2", dimension="C", dimension_name="Convencional",
              text="Fazer inventário de materiais com computador portátil"),
-    Question(id=28, code="C4", dimension="C", dimension_name="Convencional",
-             text="Manter registos de funcionários"),
-    Question(id=29, code="C5", dimension="C", dimension_name="Convencional",
+    Question(id=43, code="C3", dimension="C", dimension_name="Convencional",
+             text="Registar dados numéricos num sistema de contabilidade"),
+    Question(id=44, code="C4", dimension="C", dimension_name="Convencional",
+             text="Manter registos de expedições e receções"),
+    Question(id=45, code="C5", dimension="C", dimension_name="Convencional",
              text="Calcular e registar dados estatísticos e numéricos"),
-    Question(id=30, code="C7", dimension="C", dimension_name="Convencional",
+    Question(id=46, code="C6", dimension="C", dimension_name="Convencional",
+             text="Configurar e manter registos usando um computador"),
+    Question(id=47, code="C7", dimension="C", dimension_name="Convencional",
              text="Tratar de transações bancárias de clientes"),
+    Question(id=48, code="C8", dimension="C", dimension_name="Convencional",
+             text="Manter registos de contas a pagar e a receber"),
 ]
 
 # ---------------------------------------------------------------------------
@@ -193,11 +229,11 @@ def health():
     "/questions",
     response_model=list[Question],
     tags=["Questionário"],
-    summary="Obter as 18 perguntas RIASEC",
+    summary="Obter as 48 perguntas RIASEC",
 )
 def get_questions():
     """
-    Retorna as 30 perguntas do questionário RIASEC (5 por dimensão).
+    Retorna as 48 perguntas do questionário RIASEC (8 por dimensão).
 
     Cada pergunta deve ser avaliada numa escala de 1 a 5:
     - **1** = Não gostaria nada
@@ -217,7 +253,7 @@ def get_questions():
 )
 def predict_profile(payload: RiasecInput) -> PredictionResponse:
     """
-    Recebe as respostas às 18 perguntas RIASEC e dados demográficos opcionais,
+    Recebe as respostas às 48 perguntas RIASEC e dados demográficos opcionais,
     e retorna:
 
     - **holland_code**: Código Holland de 3 letras (ex: `ISA`, `RCE`)

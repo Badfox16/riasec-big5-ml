@@ -112,7 +112,7 @@ export const useAssessmentStore = create<AssessmentState>()(
 
       getTotalAnswered: () => Object.keys(get().answers).length,
 
-      isComplete: () => Object.keys(get().answers).length >= 30,
+      isComplete: () => Object.keys(get().answers).length >= 48,
     }),
     {
       name:    'assessment-store',

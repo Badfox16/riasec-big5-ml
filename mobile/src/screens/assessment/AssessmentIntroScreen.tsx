@@ -77,7 +77,7 @@ export default function AssessmentIntroScreen({ navigation }: Props) {
           </View>
 
           <View style={styles.statsRow}>
-            {[{ icon: '❓', value: '30', label: 'Questões' }, { icon: '🧩', value: '6', label: 'Dimensões' }, { icon: '⏱', value: '~5', label: 'Minutos' }].map(s => (
+            {[{ icon: '❓', value: '48', label: 'Questões' }, { icon: '🧩', value: '6', label: 'Dimensões' }, { icon: '⏱', value: '~8', label: 'Minutos' }].map(s => (
               <View key={s.label} style={styles.stat}>
                 <Text style={styles.statIcon}>{s.icon}</Text>
                 <Text style={styles.statValue}>{s.value}</Text>
@@ -89,7 +89,7 @@ export default function AssessmentIntroScreen({ navigation }: Props) {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Como funciona</Text>
             {[
-              { n: '1', text: 'Responde a 30 perguntas sobre atividades profissionais' },
+              { n: '1', text: 'Responde a 48 perguntas sobre atividades profissionais' },
               { n: '2', text: 'Indica o quanto gostarias de fazer cada atividade (1–5)' },
               { n: '3', text: 'Recebe o teu perfil RIASEC, Big Five e sugestões de carreira' },
             ].map(step => (
@@ -181,8 +181,8 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   stepNumText: { fontSize: Typography.sm, fontWeight: '800', color: C.primaryLight },
   stepText:    { flex: 1, fontSize: Typography.base, color: C.textSecondary, lineHeight: 22 },
 
-  dimGrid:        { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: Spacing.sm },
-  dimChip:        { flexBasis: '31%', flexGrow: 1, borderRadius: Radius.lg, padding: Spacing.md, alignItems: 'center', gap: 3, borderWidth: 1, borderColor: C.border },
+  dimGrid:        { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
+  dimChip:        { flexBasis: '30%', flexGrow: 1, borderRadius: Radius.lg, padding: Spacing.md, alignItems: 'center', gap: 3, borderWidth: 1, borderColor: C.border },
   dimEmoji:       { fontSize: 24 },
   dimLetter:      { fontSize: Typography.xl, fontWeight: '900' },
   dimName:        { fontSize: Typography.xs, color: C.textSecondary, textAlign: 'center' },

@@ -102,7 +102,7 @@ export default function QuestionScreen({ navigation }: Props) {
   };
 
   const progress = (currentIndex + 1) / TOTAL;
-  const dimQ     = (currentIndex % 5) + 1;
+  const dimQ     = (currentIndex % 8) + 1;
 
   return (
     <View style={styles.root}>
@@ -123,7 +123,7 @@ export default function QuestionScreen({ navigation }: Props) {
         <View style={[styles.dimBadge, { backgroundColor: `${q.dimColor}20`, borderColor: `${q.dimColor}40` }]}>
           <Text style={styles.dimEmoji}>{q.dimEmoji}</Text>
           <Text style={[styles.dimName, { color: q.dimColor }]}>{q.dimName}</Text>
-          <Text style={styles.dimProgress}>· {dimQ}/5</Text>
+          <Text style={styles.dimProgress}>· {dimQ}/8</Text>
         </View>
       </View>
 

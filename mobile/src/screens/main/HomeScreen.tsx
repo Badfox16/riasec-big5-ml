@@ -101,7 +101,7 @@ export default function HomeScreen() {
             <View style={styles.ctaContent}>
               <Text style={styles.ctaEmoji}>🎯</Text>
               <Text style={styles.ctaTitle}>{history.length === 0 ? 'Iniciar avaliação' : 'Nova avaliação'}</Text>
-              <Text style={styles.ctaDesc}>30 perguntas · 6 dimensões RIASEC · ~5 min</Text>
+              <Text style={styles.ctaDesc}>48 perguntas · 6 dimensões RIASEC · ~8 min</Text>
               <TouchableOpacity style={styles.ctaBtn} onPress={() => navigation.navigate('AssessmentIntro')} activeOpacity={0.9}>
                 <Text style={styles.ctaBtnText}>Começar agora →</Text>
               </TouchableOpacity>
@@ -165,7 +165,7 @@ export default function HomeScreen() {
           <Text style={styles.sectionTitle}>Como funciona</Text>
           <View style={styles.infoList}>
             {[
-              { icon: '📝', title: '30 perguntas', desc: 'Avalia a tua preferência por diferentes atividades profissionais' },
+              { icon: '📝', title: '48 perguntas', desc: 'Avalia a tua preferência por diferentes atividades profissionais' },
               { icon: '🧠', title: 'IA preditiva', desc: 'Modelo treinado com 145 mil respondentes para máxima precisão' },
               { icon: '🎓', title: 'Carreiras sugeridas', desc: 'Recebe sugestões personalizadas com base no teu perfil único' },
             ].map((item) => (
@@ -233,8 +233,8 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   resultCareers: { fontSize: Typography.xs, color: C.textMuted, maxWidth: 200 },
   resultArrow:   { fontSize: 24, color: C.textMuted },
 
-  dimGrid:        { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: Spacing.sm },
-  dimCard:        { flexBasis: '31%', flexGrow: 1, borderRadius: Radius.lg, padding: Spacing.md, alignItems: 'center', gap: 4, borderWidth: 1, borderColor: C.border },
+  dimGrid:        { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
+  dimCard:        { flexBasis: '30%', flexGrow: 1, borderRadius: Radius.lg, padding: Spacing.md, alignItems: 'center', gap: 4, borderWidth: 1, borderColor: C.border },
   dimEmoji:       { fontSize: 28 },
   dimLetter:      { fontSize: Typography.xl, fontWeight: '900' },
   dimName:        { fontSize: Typography.xs, color: C.textSecondary, textAlign: 'center' },

@@ -2,9 +2,7 @@
 Lógica de inferência da API RIASEC.
 
 O modelo foi treinado com todos os 48 itens RIASEC + scores por dimensão +
-dados demográficos. Como a API recolhe apenas 3 itens por dimensão (18 no
-total), os 5 itens em falta de cada dimensão são imputados pela média dos 3
-itens observados.
+dados demográficos. A API recolhe todos os 48 itens (8 por dimensão).
 """
 from __future__ import annotations
 
@@ -40,16 +38,6 @@ _DIM_NAMES: dict[str, str] = {
     "S": "Social",
     "E": "Empreendedor",
     "C": "Convencional",
-}
-
-# Itens recolhidos pela API (5 por dimensão)
-_API_ITEMS: dict[str, list[str]] = {
-    "R": ["R1", "R2", "R4", "R6", "R8"],
-    "I": ["I1", "I2", "I4", "I5", "I7"],
-    "A": ["A2", "A3", "A4", "A5", "A6"],
-    "S": ["S1", "S2", "S5", "S7", "S8"],
-    "E": ["E1", "E3", "E5", "E6", "E7"],
-    "C": ["C1", "C2", "C4", "C5", "C7"],
 }
 
 # Todos os 48 itens (ordem usada no treino)
@@ -115,16 +103,13 @@ def _load_model():
 def predict(payload: RiasecInput) -> PredictionResponse:
     model = _load_model()
 
-    # 1. Expand 18 itens observados → 48 (imputar média por dimensão)
+    # 1. Ler todos os 48 itens do payload
     raw = payload.model_dump()
-    item_values: dict[str, float] = {}
-
-    for dim, observed_keys in _API_ITEMS.items():
-        observed_vals = [raw[k] for k in observed_keys]
-        mean_val = float(np.mean(observed_vals))
-        for i in range(1, 9):
-            key = f"{dim}{i}"
-            item_values[key] = float(raw[key]) if key in raw else mean_val
+    item_values: dict[str, float] = {
+        f"{d}{i}": float(raw[f"{d}{i}"])
+        for d in "RIASEC"
+        for i in range(1, 9)
+    }
 
     # 2. Scores por dimensão (média dos 8 itens)
     score_values: dict[str, float] = {}

@@ -15,7 +15,7 @@ const SLIDES = [
   {
     emoji: '📋',
     title: 'Responde ao Questionário',
-    body: '30 perguntas curtas sobre atividades que gostas ou não gostas de fazer. Sem respostas certas ou erradas.',
+    body: '48 perguntas curtas sobre atividades que gostas ou não gostas de fazer. Sem respostas certas ou erradas.',
     bg: Colors.primaryLight,
     accent: Colors.primary,
   },
