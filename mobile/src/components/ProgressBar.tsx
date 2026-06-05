@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors, Radius, Spacing, Typography } from '../theme';
+import { useColors, ColorsType, Radius, Spacing, Typography } from '../theme';
 
 interface Props {
   current: number;
@@ -9,12 +9,10 @@ interface Props {
   showLabel?: boolean;
 }
 
-export default function ProgressBar({
-  current,
-  total,
-  color = Colors.primary,
-  showLabel = true,
-}: Props) {
+export default function ProgressBar({ current, total, color, showLabel = true }: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
+  const activeColor = color ?? Colors.primary;
   const pct = Math.min((current / total) * 100, 100);
 
   return (
@@ -22,41 +20,21 @@ export default function ProgressBar({
       {showLabel && (
         <View style={styles.row}>
           <Text style={styles.label}>Progresso</Text>
-          <Text style={[styles.count, { color }]}>
-            {current}/{total}
-          </Text>
+          <Text style={[styles.count, { color: activeColor }]}>{current}/{total}</Text>
         </View>
       )}
       <View style={styles.track}>
-        <View style={[styles.fill, { width: `${pct}%`, backgroundColor: color }]} />
+        <View style={[styles.fill, { width: `${pct}%`, backgroundColor: activeColor }]} />
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (C: ColorsType) => StyleSheet.create({
   container: { width: '100%' },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: Spacing.xs,
-  },
-  label: {
-    fontSize: Typography.sm,
-    color: Colors.textSecondary,
-  },
-  count: {
-    fontSize: Typography.sm,
-    fontWeight: '700',
-  },
-  track: {
-    height: 6,
-    backgroundColor: Colors.border,
-    borderRadius: Radius.full,
-    overflow: 'hidden',
-  },
-  fill: {
-    height: '100%',
-    borderRadius: Radius.full,
-  },
+  row:       { flexDirection: 'row', justifyContent: 'space-between', marginBottom: Spacing.xs },
+  label:     { fontSize: Typography.sm, color: C.textSecondary },
+  count:     { fontSize: Typography.sm, fontWeight: '700' },
+  track:     { height: 6, backgroundColor: C.border, borderRadius: Radius.full, overflow: 'hidden' },
+  fill:      { height: '100%', borderRadius: Radius.full },
 });

@@ -16,13 +16,21 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from passlib.context import CryptContext
+
 from .auth.router import router as auth_router
 from .config import get_settings
-from .db.database import engine
-from .db.models import Base
+from .db.database import SessionLocal, engine
+from .db.models import Base, User
 from .exams.router import router as exams_router
 from .predict import _load_model, predict
 from .schemas import PredictionResponse, Question, RiasecInput
+
+_pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+_DEMO_EMAIL    = "demo@eivocacao.co.mz"
+_DEMO_PASSWORD = "demo1234"
+_DEMO_NAME     = "Conta Demo"
 
 settings = get_settings()
 
@@ -105,10 +113,26 @@ _QUESTIONS: list[Question] = [
 # Lifespan (pré-carregamento do modelo)
 # ---------------------------------------------------------------------------
 
+def _seed_demo_user() -> None:
+    db = SessionLocal()
+    try:
+        if not db.query(User).filter(User.email == _DEMO_EMAIL).first():
+            db.add(User(
+                name=_DEMO_NAME,
+                email=_DEMO_EMAIL,
+                hashed_password=_pwd.hash(_DEMO_PASSWORD),
+            ))
+            db.commit()
+            print("[OK] Conta demo criada.")
+    finally:
+        db.close()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Pré-carrega o modelo e inicializa a base de dados no arranque."""
     Base.metadata.create_all(bind=engine)
+    _seed_demo_user()
     try:
         _load_model()
         print("[OK] Modelo RIASEC carregado com sucesso.")

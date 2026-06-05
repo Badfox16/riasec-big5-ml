@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Colors, Radius, Spacing, Typography, Shadow } from '../theme';
+import { useColors, ColorsType, Radius, Spacing, Typography, Shadow } from '../theme';
 import { LIKERT_EMOJIS, LIKERT_LABELS } from '../data/questions';
 
 interface Props {
@@ -9,11 +9,11 @@ interface Props {
   color?: string;
 }
 
-export default function LikertScale({
-  value,
-  onChange,
-  color = Colors.primary,
-}: Props) {
+export default function LikertScale({ value, onChange, color }: Props) {
+  const Colors = useColors();
+  const styles = useMemo(() => makeStyles(Colors), [Colors]);
+  const activeColor = color ?? Colors.primary;
+
   return (
     <View style={styles.wrapper}>
       <View style={styles.row}>
@@ -27,7 +27,7 @@ export default function LikertScale({
               style={[
                 styles.btn,
                 selected
-                  ? [{ backgroundColor: color, borderColor: color }, Shadow.sm]
+                  ? [{ backgroundColor: activeColor, borderColor: activeColor }, Shadow.sm]
                   : styles.unselected,
               ]}
             >
@@ -45,43 +45,18 @@ export default function LikertScale({
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (C: ColorsType) => StyleSheet.create({
   wrapper: { width: '100%' },
-  row: {
-    flexDirection: 'row',
-    gap: Spacing.xs,
-  },
+  row:     { flexDirection: 'row', gap: Spacing.xs },
   btn: {
-    flex: 1,
-    paddingVertical: Spacing.sm,
-    borderRadius: Radius.md,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 3,
+    flex: 1, paddingVertical: Spacing.sm,
+    borderRadius: Radius.md, borderWidth: 2,
+    alignItems: 'center', justifyContent: 'center', gap: 3,
   },
-  unselected: {
-    backgroundColor: Colors.card,
-    borderColor: Colors.border,
-  },
-  emoji: { fontSize: 20 },
-  num: {
-    fontSize: Typography.sm,
-    fontWeight: '700',
-    color: Colors.textSecondary,
-  },
-  numSelected: {
-    color: Colors.textInverse,
-  },
-  labels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: Spacing.xs,
-    paddingHorizontal: 2,
-  },
-  labelText: {
-    fontSize: Typography.xs,
-    color: Colors.textMuted,
-    maxWidth: '42%',
-  },
+  unselected:   { backgroundColor: C.card, borderColor: C.border },
+  emoji:        { fontSize: 20 },
+  num:          { fontSize: Typography.sm, fontWeight: '700', color: C.textSecondary },
+  numSelected:  { color: C.textInverse },
+  labels:       { flexDirection: 'row', justifyContent: 'space-between', marginTop: Spacing.xs, paddingHorizontal: 2 },
+  labelText:    { fontSize: Typography.xs, color: C.textMuted, maxWidth: '42%' },
 });
