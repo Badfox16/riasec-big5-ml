@@ -192,7 +192,7 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   dimDetailTitle: { fontSize: Typography.base, fontWeight: '800', marginBottom: 4 },
   dimDetailDesc:  { fontSize: Typography.sm, color: C.textSecondary, lineHeight: 20 },
 
-  disclaimer:     { backgroundColor: C.infoBg, borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: C.info + '30' },
+  disclaimer:     { backgroundColor: C.infoBg, borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: C.info + '30', marginTop: Spacing.md },
   disclaimerText: { fontSize: Typography.sm, color: C.textSecondary, lineHeight: 18 },
 
   footer:        { paddingHorizontal: Spacing.lg, paddingTop: Spacing.md, backgroundColor: C.background, borderTopWidth: 1, borderTopColor: C.border },
