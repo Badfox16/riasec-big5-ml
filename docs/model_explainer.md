@@ -271,14 +271,12 @@ joblib.dump(best_et, 'models/riasec_tipi_et_tuned.pkl')
 
 ## 6. Como a API usa o modelo
 
-A API coleta apenas **18 itens** (3 por dimensão) em vez dos 48 do dataset. Para manter compatibilidade com o pipeline treinado:
+A API coleta os **48 itens completos** (8 por dimensão), correspondendo exatamente ao questionário com que o modelo foi treinado. O fluxo de inferência é:
 
-1. Os 3 itens observados por dimensão são registados nos seus campos originais (ex: R2, R4, R6).
-2. Os 5 itens em falta de cada dimensão (ex: R1, R3, R5, R7, R8) são **imputados pela média dos 3 itens observados** da mesma dimensão.
-3. O score dimensional (`score_R`, etc.) é calculado como a média dos 8 itens (incluindo os imputados) — o que é algebricamente igual à média dos 3 observados.
-4. Os demográficos não pedidos (religião, raça, etc.) recebem os valores-moda do dataset.
-
-Esta abordagem **preserva a distribuição dos inputs** que o modelo viu no treino, minimizando o distribution shift.
+1. Os 48 valores Likert (1–5) são lidos diretamente do payload — sem imputação.
+2. Os 6 scores dimensionais (`score_R`, …, `score_C`) são calculados como a média dos 8 itens de cada dimensão.
+3. Os demográficos não pedidos (religião, raça, etc.) recebem os valores-moda do dataset.
+4. O vector de features é montado na ordem exacta que o `ColumnTransformer` espera: `[R1…C8] + [score_R…score_C] + [age, familysize] + [10 categóricas] + [vcl_score]`.
 
 O **Código Holland** é calculado na API, não pelo modelo: ordena os 6 scores por valor decrescente e toma as 3 primeiras letras. Exemplo: se `score_I=4.7, score_C=4.3, score_A=3.0, ...` → código `ICA`.
 
@@ -292,7 +290,7 @@ O **Código Holland** é calculado na API, não pelo modelo: ordena os 6 scores 
 
 3. **TIPI é uma medida curta**: 2 itens por traço têm consistência interna inferior às versões longas (BFI-44, NEO-PI-R). O modelo aprende a prever scores TIPI, não Big Five em geral.
 
-4. **Imputação de itens na API**: prever com 3/8 itens por dimensão introduz ruído face ao modelo treinado com 8/8. A qualidade da previsão é inferior à obtida com o questionário completo.
+4. **Questionário completo na API**: a API usa os 48 itens (8/8 por dimensão), eliminando o ruído de imputação. A qualidade da previsão corresponde à do modelo treinado.
 
 5. **Estático no tempo**: o modelo foi treinado com dados de 2015–2018. Preferências vocacionais e normas populacionais podem ter mudado.
 
