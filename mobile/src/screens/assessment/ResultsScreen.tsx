@@ -150,6 +150,12 @@ export default function ResultsScreen({ navigation }: Props) {
           <Text style={styles.disclaimerText}>{nota}</Text>
         </View>
 
+        <TouchableOpacity style={styles.aboutLink} onPress={() => navigation.navigate('About')} activeOpacity={0.7}>
+          <Feather name="book-open" size={14} color={C.primaryLight} />
+          <Text style={styles.aboutLinkText}>Sobre os modelos científicos usados</Text>
+          <Feather name="chevron-right" size={14} color={C.primaryLight} />
+        </TouchableOpacity>
+
         <View style={styles.actions}>
           <TouchableOpacity style={[styles.restartBtn, Shadow.sm]} onPress={handleRestart} activeOpacity={0.8}>
             <Feather name="rotate-ccw" size={16} color={C.textSecondary} />
@@ -203,6 +209,9 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
 
   disclaimer:     { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm, marginHorizontal: Spacing.lg, backgroundColor: C.card, borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: C.border },
   disclaimerText: { flex: 1, fontSize: Typography.xs, color: C.textMuted, lineHeight: 18 },
+
+  aboutLink:     { flexDirection: 'row', alignItems: 'center', gap: 6, marginHorizontal: Spacing.lg, justifyContent: 'center', paddingVertical: Spacing.xs },
+  aboutLinkText: { fontSize: Typography.sm, fontWeight: '600', color: C.primaryLight },
 
   actions:         { marginHorizontal: Spacing.lg, flexDirection: 'row', gap: Spacing.sm },
   restartBtn:      { flex: 1, flexDirection: 'row', gap: Spacing.xs, backgroundColor: C.card, borderRadius: Radius.lg, paddingVertical: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.border },

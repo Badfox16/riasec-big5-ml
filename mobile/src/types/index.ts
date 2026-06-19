@@ -150,6 +150,7 @@ export type AppStackParamList = {
   HistoryDetail:    { record: AssessmentRecord };
   UniversityDetail: { codigo: string; area: string; cursoTitulo: string };
   Compare:          undefined;
+  About:            undefined;
 };
 
 export type TabParamList = {

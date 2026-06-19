@@ -5,11 +5,16 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Switch } f
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { useAuthStore }       from '../../store/useAuthStore';
 import { useAssessmentStore } from '../../store/useAssessmentStore';
 import { useThemeStore }      from '../../store/useThemeStore';
 import { useColors, ColorsType, Spacing, Radius, Typography, Shadow } from '../../theme';
+import { AppStackParamList } from '../../types';
+
+type Nav = NativeStackNavigationProp<AppStackParamList>;
 
 function Row({ icon, label, value, onPress, danger, right }: {
   icon: keyof typeof Feather.glyphMap; label: string; value?: string;
@@ -38,6 +43,7 @@ export default function ProfileScreen() {
   const { user, logout } = useAuthStore();
   const { history, reset } = useAssessmentStore();
   const { isDark, toggle } = useThemeStore();
+  const navigation = useNavigation<Nav>();
 
   const handleLogout = () => {
     Alert.alert('Terminar sessão', 'Tens a certeza que queres sair?', [
@@ -131,7 +137,7 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Sobre</Text>
           <View style={[styles.card, Shadow.sm]}>
-            <Row icon="info"      label="Sobre o eiVocação" value="v1.0.0" onPress={() => {}} />
+            <Row icon="info"      label="Sobre o eiVocação" value="v1.0.0" onPress={() => navigation.navigate('About')} />
             <View style={styles.sep} />
             <Row icon="shield"    label="Política de privacidade" onPress={() => {}} />
             <View style={styles.sep} />
