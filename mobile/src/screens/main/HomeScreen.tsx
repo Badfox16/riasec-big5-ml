@@ -21,6 +21,13 @@ function DimIcon({ family, name, size, color }: { family: IconFamily; name: stri
     : <Feather name={name as any} size={size} color={color} />;
 }
 
+function daysSinceLastLabel(iso: string): string {
+  const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
+  if (days <= 0) return 'hoje';
+  if (days === 1) return 'há 1 dia';
+  return `há ${days} dias`;
+}
+
 const RIASEC_INFO = [
   { letter: 'R', name: 'Realista',      iconFamily: 'Feather' as IconFamily,  iconName: 'tool',                  color: Colors.riasec.R,
     desc: 'Prefere trabalho prático e manual. Gosta de construir, reparar e operar máquinas.' },
@@ -131,6 +138,14 @@ export default function HomeScreen() {
               </View>
               <Feather name="chevron-right" size={22} color={Colors.textMuted} />
             </TouchableOpacity>
+
+            <View style={styles.encourageBanner}>
+              <Feather name="trending-up" size={16} color={Colors.accentLight} />
+              <Text style={styles.encourageText}>
+                A tua última avaliação foi {daysSinceLastLabel(lastResult.date)}. Os teus interesses podem ter evoluído —
+                faz uma nova avaliação para ver como cresceste.
+              </Text>
+            </View>
           </View>
         )}
 
@@ -220,7 +235,6 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   ctaCircle1:  { position: 'absolute', width: 160, height: 160, borderRadius: 80, backgroundColor: 'rgba(255,255,255,0.07)', top: -40, right: -40 },
   ctaCircle2:  { position: 'absolute', width: 100, height: 100, borderRadius: 50, backgroundColor: 'rgba(255,255,255,0.05)', bottom: -30, left: 20 },
   ctaContent:  { gap: Spacing.sm },
-  ctaEmoji:    { fontSize: 40 },
   ctaTitle:    { fontSize: Typography['2xl'], fontWeight: '900', color: '#FFF' },
   ctaDesc:     { fontSize: Typography.sm, color: 'rgba(255,255,255,0.75)' },
   ctaBtn:      { backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: Radius.lg, paddingVertical: 14, paddingHorizontal: Spacing.xl, alignSelf: 'flex-start', marginTop: Spacing.xs, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' },
@@ -229,6 +243,14 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   section:      { paddingHorizontal: Spacing.lg, marginTop: Spacing.xl, gap: Spacing.md },
   sectionTitle: { fontSize: Typography.lg, fontWeight: '800', color: C.text },
   sectionSub:   { fontSize: Typography.sm, color: C.textSecondary, marginTop: -Spacing.sm },
+
+  encourageBanner: {
+    flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm,
+    backgroundColor: C.accentGlow, borderRadius: Radius.lg,
+    padding: Spacing.md, marginTop: Spacing.sm,
+    borderWidth: 1, borderColor: C.accent + '30',
+  },
+  encourageText: { flex: 1, fontSize: Typography.sm, color: C.textSecondary, lineHeight: 19 },
 
   resultPreview: {
     flexDirection: 'row', alignItems: 'center',

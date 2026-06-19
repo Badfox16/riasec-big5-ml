@@ -149,6 +149,7 @@ export type AppStackParamList = {
   Results:          undefined;
   HistoryDetail:    { record: AssessmentRecord };
   UniversityDetail: { codigo: string; area: string; cursoTitulo: string };
+  Compare:          undefined;
 };
 
 export type TabParamList = {

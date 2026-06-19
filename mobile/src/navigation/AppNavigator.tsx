@@ -25,6 +25,7 @@ import LoadingScreen         from '../screens/assessment/LoadingScreen';
 import ResultsScreen         from '../screens/assessment/ResultsScreen';
 import HistoryDetailScreen   from '../screens/main/HistoryDetailScreen';
 import UniversityDetailScreen from '../screens/main/UniversityDetailScreen';
+import CompareScreen          from '../screens/main/CompareScreen';
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const AppStack  = createNativeStackNavigator<AppStackParamList>();
@@ -94,6 +95,13 @@ function AppNavigator() {
       <AppStack.Screen
         name="UniversityDetail"
         component={UniversityDetailScreen}
+        options={{ animation: 'slide_from_right' }}
+      />
+
+      {/* Compare assessments */}
+      <AppStack.Screen
+        name="Compare"
+        component={CompareScreen}
         options={{ animation: 'slide_from_right' }}
       />
     </AppStack.Navigator>

@@ -56,6 +56,12 @@ export default function HistoryScreen() {
         <Text style={styles.headerSub}>
           {history.length === 0 ? 'Ainda não fizeste nenhuma avaliação' : `${history.length} avaliação${history.length > 1 ? 'ões' : ''} realizadas`}
         </Text>
+        {history.length >= 2 && (
+          <TouchableOpacity style={styles.compareBtn} onPress={() => navigation.navigate('Compare')} activeOpacity={0.85}>
+            <Feather name="bar-chart-2" size={15} color={Colors.primaryLight} />
+            <Text style={styles.compareBtnText}>Comparar Avaliações</Text>
+          </TouchableOpacity>
+        )}
       </LinearGradient>
 
       {history.length === 0 ? (
@@ -87,6 +93,9 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   header:      { paddingHorizontal: Spacing.lg, paddingBottom: Spacing.xl, gap: 4 },
   headerTitle: { fontSize: Typography['2xl'], fontWeight: '800', color: C.text },
   headerSub:   { fontSize: Typography.sm, color: C.textSecondary },
+
+  compareBtn:     { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', marginTop: Spacing.sm, backgroundColor: C.primaryGlow, borderRadius: Radius.full, paddingHorizontal: Spacing.md, paddingVertical: 8, borderWidth: 1, borderColor: C.primaryLight + '40' },
+  compareBtnText: { fontSize: Typography.sm, fontWeight: '700', color: C.primaryLight },
 
   list: { padding: Spacing.lg, gap: Spacing.sm },
 

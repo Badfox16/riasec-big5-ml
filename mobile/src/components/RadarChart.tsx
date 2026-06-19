@@ -8,7 +8,9 @@ import { DimensionScore } from '../types';
 
 interface Props {
   scores: DimensionScore[];
+  compareScores?: DimensionScore[];
   size?: number;
+  compareColor?: string;
 }
 
 const AXES: { key: string; label: string; angle: number }[] = [
@@ -26,21 +28,33 @@ function polarToXY(cx: number, cy: number, r: number, angleDeg: number) {
   return { x: cx + r * Math.cos(toRad(angleDeg)), y: cy + r * Math.sin(toRad(angleDeg)) };
 }
 
-export default function RadarChart({ scores, size = 260 }: Props) {
+function scorePolygon(scores: DimensionScore[], cx: number, cy: number, maxR: number) {
+  const scoreMap: Record<string, number> = {};
+  scores.forEach(s => { scoreMap[s.letter] = s.score; });
+  const points = AXES.map(({ key, angle }) => {
+    const val = scoreMap[key] ?? 1;
+    return polarToXY(cx, cy, (val / 5) * maxR, angle);
+  });
+  return points.map(p => `${p.x},${p.y}`).join(' ');
+}
+
+export default function RadarChart({ scores, compareScores, size = 260, compareColor }: Props) {
   const Colors = useColors();
   const cx = size / 2, cy = size / 2;
   const maxR = size * 0.38;
   const labelR = maxR + 18;
   const levels = [1, 2, 3, 4, 5];
 
-  const scoreMap: Record<string, number> = {};
-  scores.forEach(s => { scoreMap[s.letter] = s.score; });
+  const dataPolygon    = scorePolygon(scores, cx, cy, maxR);
+  const comparePolygon = compareScores ? scorePolygon(compareScores, cx, cy, maxR) : null;
+  const cmpColor = compareColor ?? Colors.textMuted;
 
   const dataPoints = AXES.map(({ key, angle }) => {
+    const scoreMap: Record<string, number> = {};
+    scores.forEach(s => { scoreMap[s.letter] = s.score; });
     const val = scoreMap[key] ?? 1;
     return polarToXY(cx, cy, (val / 5) * maxR, angle);
   });
-  const dataPolygon = dataPoints.map(p => `${p.x},${p.y}`).join(' ');
 
   const gridPolygons = levels.map(level => {
     const r = (level / 5) * maxR;
@@ -60,6 +74,9 @@ export default function RadarChart({ scores, size = 260 }: Props) {
           const outer = polarToXY(cx, cy, maxR, angle);
           return <Line key={`axis-${key}`} x1={cx} y1={cy} x2={outer.x} y2={outer.y} stroke={Colors.border} strokeWidth={1} />;
         })}
+        {comparePolygon && (
+          <Polygon points={comparePolygon} fill={cmpColor + '22'} stroke={cmpColor} strokeWidth={2} strokeDasharray="5,4" strokeLinejoin="round" />
+        )}
         <Polygon points={dataPolygon} fill={Colors.primary + '33'} stroke={Colors.primary} strokeWidth={2.5} strokeLinejoin="round" />
         {dataPoints.map((p, i) => (
           <Circle key={`dot-${i}`} cx={p.x} cy={p.y} r={4} fill={Colors.riasec[AXES[i].key]} stroke={Colors.card} strokeWidth={1.5} />
