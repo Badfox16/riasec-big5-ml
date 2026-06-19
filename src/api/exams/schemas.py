@@ -15,6 +15,11 @@ class ExamCreateRequest(BaseModel):
     age:       int | None = None
     gender:    int | None = None
     education: int | None = None
+    provincia:     str | None = None
+    cidade:        str | None = None
+    tipo_escola:   str | None = None
+    classe_actual: str | None = None
+    faixa_etaria:  str | None = None
 
 
 class ExamOut(BaseModel):
@@ -29,3 +34,8 @@ class ExamOut(BaseModel):
     age:       int | None = None
     gender:    int | None = None
     education: int | None = None
+    provincia:     str | None = None
+    cidade:        str | None = None
+    tipo_escola:   str | None = None
+    classe_actual: str | None = None
+    faixa_etaria:  str | None = None

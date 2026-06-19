@@ -32,6 +32,11 @@ def _to_out(exam: ExamResult) -> ExamOut:
         age=exam.age,
         gender=exam.gender,
         education=exam.education,
+        provincia=exam.provincia,
+        cidade=exam.cidade,
+        tipo_escola=exam.tipo_escola,
+        classe_actual=exam.classe_actual,
+        faixa_etaria=exam.faixa_etaria,
     )
 
 
@@ -70,6 +75,11 @@ def create_exam(
         age=body.age,
         gender=body.gender,
         education=body.education,
+        provincia=body.provincia,
+        cidade=body.cidade,
+        tipo_escola=body.tipo_escola,
+        classe_actual=body.classe_actual,
+        faixa_etaria=body.faixa_etaria,
     )
     db.add(exam)
     db.commit()

@@ -7,6 +7,12 @@ import { AssessmentRecord, Demographics, PredictionResponse } from '../types';
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8000';
 const DEFAULT_TIMEOUT = 15000;
 
+// Idade representativa de cada faixa etária — usada apenas para alimentar o
+// modelo de ML (treinado com idade numérica), nunca pedida directamente ao utilizador.
+const FAIXA_ETARIA_IDADE: Record<string, number> = {
+  '15-17': 16, '18-20': 19, '21-24': 22, '25-30': 27, '30+': 32,
+};
+
 // ── Core helpers ──────────────────────────────────────────────────────────────
 
 async function request<T>(
@@ -84,11 +90,12 @@ export async function predict(
   answers: Record<string, number>,
   demographics?: Demographics | null,
 ): Promise<PredictionResponse> {
-  const body: Record<string, number> = { ...answers };
+  const body: Record<string, number | string> = { ...answers };
   if (demographics) {
-    body.age       = demographics.age;
+    body.age       = FAIXA_ETARIA_IDADE[demographics.faixa_etaria];
     body.gender    = demographics.gender;
     body.education = demographics.education;
+    body.provincia = demographics.provincia;
   }
   return request<PredictionResponse>('/predict', {
     method: 'POST',
@@ -145,9 +152,14 @@ export async function saveExamApi(
 ): Promise<AssessmentRecord> {
   const body = {
     ...result,
-    age:       demographics?.age       ?? null,
-    gender:    demographics?.gender    ?? null,
-    education: demographics?.education ?? null,
+    age:           demographics ? FAIXA_ETARIA_IDADE[demographics.faixa_etaria] : null,
+    gender:        demographics?.gender        ?? null,
+    education:     demographics?.education     ?? null,
+    provincia:     demographics?.provincia     ?? null,
+    cidade:        demographics?.cidade        ?? null,
+    tipo_escola:   demographics?.tipo_escola   ?? null,
+    classe_actual: demographics?.classe_actual ?? null,
+    faixa_etaria:  demographics?.faixa_etaria  ?? null,
   };
   const saved = await authRequest<any>('/exams', token, {
     method: 'POST',

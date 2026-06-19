@@ -17,6 +17,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from passlib.context import CryptContext
+from sqlalchemy import inspect, text
 
 from .auth.router import router as auth_router
 from .config import get_settings
@@ -164,10 +165,35 @@ def _seed_demo_user() -> None:
         db.close()
 
 
+def _ensure_exam_columns() -> None:
+    """Adiciona colunas novas a exam_results sem apagar dados já gravados.
+
+    create_all() só cria tabelas em falta — não altera tabelas já existentes.
+    Como o projecto não usa Alembic, esta migração simples e idempotente
+    cobre o caso de adicionar colunas opcionais a uma tabela existente.
+    """
+    inspector = inspect(engine)
+    if "exam_results" not in inspector.get_table_names():
+        return
+    existing = {col["name"] for col in inspector.get_columns("exam_results")}
+    new_columns = {
+        "provincia":     "VARCHAR(50)",
+        "cidade":        "VARCHAR(80)",
+        "tipo_escola":   "VARCHAR(20)",
+        "classe_actual": "VARCHAR(40)",
+        "faixa_etaria":  "VARCHAR(10)",
+    }
+    with engine.begin() as conn:
+        for name, col_type in new_columns.items():
+            if name not in existing:
+                conn.execute(text(f"ALTER TABLE exam_results ADD COLUMN {name} {col_type}"))
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Pré-carrega o modelo e inicializa a base de dados no arranque."""
     Base.metadata.create_all(bind=engine)
+    _ensure_exam_columns()
     _seed_demo_user()
     try:
         _load_model()

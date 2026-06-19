@@ -6,7 +6,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { AppStackParamList, Demographics } from '../../types';
+import {
+  AppStackParamList, Demographics, FaixaEtaria, TipoEscola, ClasseActual, Provincia, PROVINCIAS,
+} from '../../types';
 import { useAssessmentStore } from '../../store/useAssessmentStore';
 import { useColors, ColorsType, Spacing, Radius, Typography, Shadow } from '../../theme';
 
@@ -14,6 +16,43 @@ type Props = NativeStackScreenProps<AppStackParamList, 'Demographics'>;
 
 const GENDERS   = [{ value: 1, label: 'Masculino', emoji: '♂' }, { value: 2, label: 'Feminino', emoji: '♀' }, { value: 3, label: 'Outro', emoji: '⚧' }] as const;
 const EDUCATION = [{ value: 1, label: 'Ensino Básico', emoji: '📚' }, { value: 2, label: 'Ensino Médio', emoji: '🏫' }, { value: 3, label: 'Licenciatura', emoji: '🎓' }, { value: 4, label: 'Pós-graduação', emoji: '🔬' }] as const;
+const TIPOS_ESCOLA: TipoEscola[] = ['Pública', 'Privada', 'Semi-privada'];
+const CLASSES: ClasseActual[] = [
+  '10ª classe', '11ª classe', '12ª classe',
+  'Universitário 1º ano', 'Universitário 2º ano',
+  'Já formado', 'Profissional',
+];
+const FAIXAS: { value: FaixaEtaria; label: string }[] = [
+  { value: '15-17', label: '15-17' },
+  { value: '18-20', label: '18-20' },
+  { value: '21-24', label: '21-24' },
+  { value: '25-30', label: '25-30' },
+  { value: '30+',   label: 'Mais de 30' },
+];
+
+function ChipGroup<T extends string>({ options, value, onChange }: {
+  options: T[]; value: T | null; onChange: (v: T) => void;
+}) {
+  const C      = useColors();
+  const styles = useMemo(() => makeStyles(C), [C]);
+  return (
+    <View style={styles.tagGrid}>
+      {options.map(opt => {
+        const active = value === opt;
+        return (
+          <TouchableOpacity
+            key={opt}
+            style={[styles.tag, active && { borderColor: C.primaryLight }]}
+            onPress={() => onChange(opt)} activeOpacity={0.8}
+          >
+            {active && <LinearGradient colors={[`${C.primary}30`, `${C.primary}10`]} style={StyleSheet.absoluteFill} />}
+            <Text style={[styles.tagLabel, active && { color: C.primaryLight, fontWeight: '700' }]}>{opt}</Text>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+}
 
 export default function DemographicsScreen({ navigation }: Props) {
   const insets  = useSafeAreaInsets();
@@ -21,9 +60,13 @@ export default function DemographicsScreen({ navigation }: Props) {
   const styles  = useMemo(() => makeStyles(C), [C]);
   const { setDemographics } = useAssessmentStore();
 
-  const [age,       setAge]       = useState('');
-  const [gender,    setGender]    = useState<1|2|3|null>(null);
-  const [education, setEducation] = useState<1|2|3|4|null>(null);
+  const [provincia,    setProvincia]    = useState<Provincia | null>(null);
+  const [cidade,       setCidade]       = useState('');
+  const [tipoEscola,   setTipoEscola]   = useState<TipoEscola | null>(null);
+  const [classeActual, setClasseActual] = useState<ClasseActual | null>(null);
+  const [gender,       setGender]       = useState<1|2|3|null>(null);
+  const [education,    setEducation]    = useState<1|2|3|4|null>(null);
+  const [faixaEtaria,  setFaixaEtaria]  = useState<FaixaEtaria | null>(null);
 
   const fadeAnim  = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
@@ -35,15 +78,21 @@ export default function DemographicsScreen({ navigation }: Props) {
     ]).start();
   }, []);
 
-  const proceed = (withData: boolean) => {
-    if (withData && gender && education) {
-      const ageNum = parseInt(age, 10);
-      setDemographics({ age: ageNum >= 13 && ageNum <= 100 ? ageNum : 25, gender, education });
-    }
+  const canSubmit = !!(
+    provincia && cidade.trim() && tipoEscola && classeActual &&
+    gender && education && faixaEtaria
+  );
+
+  const proceed = () => {
+    if (!canSubmit) return;
+    const data: Demographics = {
+      provincia, cidade: cidade.trim(), tipo_escola: tipoEscola!,
+      classe_actual: classeActual!, gender: gender!, education: education!,
+      faixa_etaria: faixaEtaria!,
+    } as Demographics;
+    setDemographics(data);
     navigation.replace('Loading');
   };
-
-  const canSubmit = gender !== null && education !== null;
 
   return (
     <View style={styles.root}>
@@ -56,21 +105,53 @@ export default function DemographicsScreen({ navigation }: Props) {
         <Animated.View style={[styles.content, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
 
           <View style={styles.header}>
-            <Text style={styles.badge}>Opcional</Text>
+            <Text style={styles.badge}>Obrigatório</Text>
             <Text style={styles.title}>Dados adicionais</Text>
-            <Text style={styles.subtitle}>Estas informações melhoram a precisão das sugestões de carreira. Podes saltar se preferires.</Text>
+            <Text style={styles.subtitle}>Estes dados permitem indicar a empregabilidade dos cursos na tua província e melhorar a precisão das sugestões. São necessários para continuar.</Text>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>Idade</Text>
+            <Text style={styles.sectionLabel}>Província de residência</Text>
+            <ChipGroup options={[...PROVINCIAS]} value={provincia} onChange={setProvincia} />
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>Cidade</Text>
             <View style={styles.ageInputWrap}>
-              <Text style={styles.ageIcon}>🎂</Text>
+              <Text style={styles.ageIcon}>📍</Text>
               <TextInput
-                style={styles.ageInput} value={age} onChangeText={v => setAge(v.replace(/\D/g, ''))}
-                placeholder="Ex: 20" placeholderTextColor={C.textMuted}
-                keyboardType="number-pad" maxLength={3} selectionColor={C.primaryLight}
+                style={styles.cidadeInput} value={cidade} onChangeText={setCidade}
+                placeholder="Ex: Beira" placeholderTextColor={C.textMuted}
+                selectionColor={C.primaryLight}
               />
-              <Text style={styles.ageUnit}>anos</Text>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>Tipo de escola</Text>
+            <ChipGroup options={TIPOS_ESCOLA} value={tipoEscola} onChange={setTipoEscola} />
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>Classe actual / último ano concluído</Text>
+            <ChipGroup options={CLASSES} value={classeActual} onChange={setClasseActual} />
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>Faixa etária</Text>
+            <View style={styles.chipRow}>
+              {FAIXAS.map(f => (
+                <TouchableOpacity
+                  key={f.value}
+                  style={[styles.chip, faixaEtaria === f.value && { borderColor: C.primaryLight }]}
+                  onPress={() => setFaixaEtaria(f.value)} activeOpacity={0.8}
+                >
+                  {faixaEtaria === f.value && (
+                    <LinearGradient colors={[`${C.primary}30`, `${C.primary}10`]} style={StyleSheet.absoluteFill} />
+                  )}
+                  <Text style={[styles.chipLabel, faixaEtaria === f.value && { color: C.primaryLight, fontWeight: '700' }]}>{f.label}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
 
@@ -113,7 +194,7 @@ export default function DemographicsScreen({ navigation }: Props) {
           </View>
 
           <View style={styles.privacyNote}>
-            <Text style={styles.privacyText}>🔒 Os dados são usados apenas para melhorar as sugestões. Não são partilhados.</Text>
+            <Text style={styles.privacyText}>🔒 Os dados são usados apenas para melhorar as sugestões e para fins de investigação académica. Não são partilhados.</Text>
           </View>
 
         </Animated.View>
@@ -122,7 +203,7 @@ export default function DemographicsScreen({ navigation }: Props) {
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, Spacing.lg) }]}>
         <TouchableOpacity
           style={[styles.submitBtn, !canSubmit && styles.submitBtnDisabled, Shadow.primary]}
-          onPress={() => proceed(true)} disabled={!canSubmit} activeOpacity={0.9}
+          onPress={proceed} disabled={!canSubmit} activeOpacity={0.9}
         >
           <LinearGradient
             colors={canSubmit ? C.primaryGradient : [C.surface, C.surface]}
@@ -130,9 +211,6 @@ export default function DemographicsScreen({ navigation }: Props) {
           >
             <Text style={styles.submitText}>Continuar →</Text>
           </LinearGradient>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.skipBtn} onPress={() => proceed(false)}>
-          <Text style={styles.skipText}>Saltar este passo</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -154,13 +232,16 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
 
   ageInputWrap: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.card, borderRadius: Radius.lg, borderWidth: 1, borderColor: C.border, paddingHorizontal: Spacing.md, height: 56, gap: Spacing.md },
   ageIcon:  { fontSize: 20 },
-  ageInput: { flex: 1, fontSize: Typography.xl, fontWeight: '700', color: C.text, height: '100%' },
-  ageUnit:  { fontSize: Typography.base, color: C.textMuted, fontWeight: '500' },
+  cidadeInput: { flex: 1, fontSize: Typography.lg, fontWeight: '700', color: C.text, height: '100%' },
 
   chipRow:  { flexDirection: 'row', gap: Spacing.sm },
   chip:     { flex: 1, height: 68, backgroundColor: C.card, borderRadius: Radius.lg, borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center', gap: 4, overflow: 'hidden' },
   chipEmoji:{ fontSize: 22 },
   chipLabel:{ fontSize: Typography.xs, fontWeight: '600', color: C.textSecondary },
+
+  tagGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
+  tag:     { paddingHorizontal: Spacing.md, paddingVertical: 12, backgroundColor: C.card, borderRadius: Radius.full, borderWidth: 1.5, borderColor: C.border, overflow: 'hidden' },
+  tagLabel:{ fontSize: Typography.sm, fontWeight: '600', color: C.textSecondary },
 
   eduGrid:   { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   eduCard:   { width: '47%', height: 80, backgroundColor: C.card, borderRadius: Radius.lg, borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center', gap: 4, overflow: 'hidden' },
@@ -175,6 +256,4 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   submitBtnDisabled:{ opacity: 0.5 },
   submitGradient:   { paddingVertical: 16, alignItems: 'center' },
   submitText:       { fontSize: Typography.lg, fontWeight: '800', color: '#FFF' },
-  skipBtn:          { alignItems: 'center', paddingVertical: Spacing.sm },
-  skipText:         { fontSize: Typography.base, color: C.textMuted, fontWeight: '500' },
 });

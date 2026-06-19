@@ -87,6 +87,11 @@ class RiasecInput(BaseModel):
         default=3,
         description="Educação: 1=Menos que HS, 2=HS, 3=Licenciatura, 4=Pós-graduação"
     )
+    provincia: str | None = Field(
+        default=None,
+        description="Província de residência (ex: Maputo Cidade, Sofala). Usada apenas para anotar "
+                     "empregabilidade por curso — não entra no modelo de ML."
+    )
 
     model_config = {"json_schema_extra": {
         "example": {

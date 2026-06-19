@@ -51,4 +51,10 @@ class ExamResult(Base):
     gender:    Mapped[int | None] = mapped_column(Integer, nullable=True)
     education: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
+    provincia:     Mapped[str | None] = mapped_column(String(50), nullable=True)
+    cidade:        Mapped[str | None] = mapped_column(String(80), nullable=True)
+    tipo_escola:   Mapped[str | None] = mapped_column(String(20), nullable=True)
+    classe_actual: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    faixa_etaria:  Mapped[str | None] = mapped_column(String(10), nullable=True)
+
     owner: Mapped["User"] = relationship("User", back_populates="exams")

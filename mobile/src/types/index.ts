@@ -20,10 +20,27 @@ export interface DimensionGroup {
   questions: Question[];
 }
 
+export type FaixaEtaria = '15-17' | '18-20' | '21-24' | '25-30' | '30+';
+export type TipoEscola = 'Pública' | 'Privada' | 'Semi-privada';
+export type ClasseActual =
+  | '10ª classe' | '11ª classe' | '12ª classe'
+  | 'Universitário 1º ano' | 'Universitário 2º ano'
+  | 'Já formado' | 'Profissional';
+
+export const PROVINCIAS = [
+  'Cabo Delgado', 'Gaza', 'Inhambane', 'Manica', 'Maputo Província',
+  'Maputo Cidade', 'Nampula', 'Niassa', 'Sofala', 'Tete', 'Zambézia',
+] as const;
+export type Provincia = typeof PROVINCIAS[number];
+
 export interface Demographics {
-  age: number;
   gender: 1 | 2 | 3;       // 1=Masculino, 2=Feminino, 3=Outro
   education: 1 | 2 | 3 | 4; // 1=<HS, 2=HS, 3=Licenciatura, 4=Pós-graduação
+  provincia: Provincia;
+  cidade: string;
+  tipo_escola: TipoEscola;
+  classe_actual: ClasseActual;
+  faixa_etaria: FaixaEtaria;
 }
 
 export interface DimensionScore {

@@ -32,7 +32,7 @@ function HistoryItem({ item, onPress }: { item: AssessmentRecord; onPress: () =>
           <Text style={styles.itemDate}>{new Date(item.date).toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' })}</Text>
           <Text style={styles.itemCareers} numberOfLines={1}>{item.careers.slice(0, 2).map(c => c.titulo).join(' · ')}</Text>
           {item.demographics && (
-            <Text style={styles.itemDemog}>{EDUCATION_LABELS[item.demographics.education]} · {item.demographics.age} anos</Text>
+            <Text style={styles.itemDemog}>{EDUCATION_LABELS[item.demographics.education]} · {item.demographics.provincia}</Text>
           )}
         </View>
         <Text style={styles.arrow}>›</Text>
