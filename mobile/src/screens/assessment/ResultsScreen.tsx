@@ -159,11 +159,11 @@ export default function ResultsScreen({ navigation }: Props) {
         <View style={styles.actions}>
           <TouchableOpacity style={[styles.restartBtn, Shadow.sm]} onPress={handleRestart} activeOpacity={0.8}>
             <Feather name="rotate-ccw" size={16} color={C.textSecondary} />
-            <Text style={styles.restartText}>Nova avaliação</Text>
+            <Text style={styles.restartText} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>Nova avaliação</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.homeBtn, Shadow.primary]} onPress={handleRestart} activeOpacity={0.9}>
             <LinearGradient colors={accentGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.homeBtnGradient}>
-              <Text style={styles.homeBtnText}>Ver histórico →</Text>
+              <Text style={styles.homeBtnText} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>Ver histórico →</Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>
@@ -214,9 +214,9 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   aboutLinkText: { fontSize: Typography.sm, fontWeight: '600', color: C.primaryLight },
 
   actions:         { marginHorizontal: Spacing.lg, flexDirection: 'row', gap: Spacing.sm },
-  restartBtn:      { flex: 1, flexDirection: 'row', gap: Spacing.xs, backgroundColor: C.card, borderRadius: Radius.lg, paddingVertical: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.border },
-  restartText:     { fontSize: Typography.base, fontWeight: '700', color: C.textSecondary },
-  homeBtn:         { flex: 2, borderRadius: Radius.lg, overflow: 'hidden' },
-  homeBtnGradient: { paddingVertical: 14, alignItems: 'center' },
+  restartBtn:      { flex: 1, flexDirection: 'row', gap: Spacing.xs, backgroundColor: C.card, borderRadius: Radius.lg, paddingVertical: 14, paddingHorizontal: Spacing.xs, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.border },
+  restartText:     { fontSize: Typography.base, fontWeight: '700', color: C.textSecondary, flexShrink: 1 },
+  homeBtn:         { flex: 1, borderRadius: Radius.lg, overflow: 'hidden' },
+  homeBtnGradient: { paddingVertical: 14, paddingHorizontal: Spacing.xs, alignItems: 'center' },
   homeBtnText:     { fontSize: Typography.base, fontWeight: '700', color: '#FFF' },
 });

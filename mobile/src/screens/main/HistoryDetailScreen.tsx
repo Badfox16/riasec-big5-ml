@@ -12,6 +12,7 @@ import { useColors, ColorsType, Colors, Spacing, Radius, Typography, Shadow } fr
 import RadarChart from '../../components/RadarChart';
 import BigFiveBar from '../../components/BigFiveBar';
 import CareerCard from '../../components/CareerCard';
+import CourseCard from '../../components/CourseCard';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'HistoryDetail'>;
 
@@ -28,7 +29,7 @@ export default function HistoryDetailScreen({ route, navigation }: Props) {
   const C       = useColors();
   const styles  = useMemo(() => makeStyles(C), [C]);
   const { record } = route.params;
-  const { holland_code, riasec_scores, big5, careers, nota, date } = record;
+  const { holland_code, riasec_scores, big5, courses, careers, nota, date } = record;
 
   const topLetter   = holland_code[0];
   const accentColor = C.riasec[topLetter] ?? C.primary;
@@ -68,6 +69,16 @@ export default function HistoryDetailScreen({ route, navigation }: Props) {
             </View>
           ))}
         </View>
+
+        {courses && courses.length > 0 && (
+          <View style={[styles.card, Shadow.sm]}>
+            <Text style={styles.cardTitle}>Cursos Recomendados</Text>
+            <Text style={styles.cardSub}>Faculdades e requisitos de acesso compatíveis com este perfil</Text>
+            {courses.map((c, i) => (
+              <CourseCard key={i} course={c} index={i} accentColor={accentColor} provincia={record.demographics?.provincia} />
+            ))}
+          </View>
+        )}
 
         <View style={[styles.card, Shadow.sm]}>
           <Text style={styles.cardTitle}>Big Five</Text>
@@ -110,6 +121,7 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
     padding: Spacing.lg, gap: Spacing.sm, borderWidth: 1, borderColor: C.border,
   },
   cardTitle: { fontSize: Typography.lg, fontWeight: '800', color: C.text, marginBottom: 4 },
+  cardSub:   { fontSize: Typography.sm, color: C.textSecondary, marginTop: -4, marginBottom: 4 },
   radarWrap: { alignItems: 'center', paddingVertical: Spacing.md },
 
   scoreRow:  { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },

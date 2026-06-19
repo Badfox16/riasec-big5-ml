@@ -44,13 +44,15 @@ export default function CourseCard({ course, index, accentColor, provincia }: Pr
       </View>
       <View style={styles.content}>
         <View style={styles.titleRow}>
-          <Text style={[styles.title, { color: accent }]}>{course.titulo}</Text>
+          <Text style={[styles.title, { color: accent }]} numberOfLines={2}>{course.titulo}</Text>
           {hasNivel && (
             <TouchableOpacity
               style={[styles.empBadge, { backgroundColor: bg }]}
               onPress={() => setModalVisible(true)} activeOpacity={0.7}
             >
-              <Text style={[styles.empBadgeText, { color: fg }]}>{EMPREGABILIDADE_LABEL[nivel]}</Text>
+              <Feather name="briefcase" size={10} color={fg} />
+              <Text style={[styles.empBadgeText, { color: fg }]}>Emprego: {EMPREGABILIDADE_LABEL[nivel]}</Text>
+              <Feather name="info" size={10} color={fg} />
             </TouchableOpacity>
           )}
         </View>
@@ -110,7 +112,7 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   content:          { flex: 1, gap: 4 },
   titleRow:         { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   title:            { flex: 1, fontSize: Typography.base, fontWeight: '700' },
-  empBadge:         { paddingHorizontal: 8, paddingVertical: 3, borderRadius: Radius.full },
+  empBadge:         { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: Radius.full, flexShrink: 0 },
   empBadgeText:     { fontSize: Typography.xs, fontWeight: '800' },
   institutionBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.sm },
   institution:      { fontSize: Typography.xs, fontWeight: '600' },
