@@ -3,6 +3,7 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -145,12 +146,14 @@ export default function ResultsScreen({ navigation }: Props) {
         </Animated.View>
 
         <View style={styles.disclaimer}>
-          <Text style={styles.disclaimerText}>ℹ  {nota}</Text>
+          <Feather name="info" size={14} color={C.textMuted} />
+          <Text style={styles.disclaimerText}>{nota}</Text>
         </View>
 
         <View style={styles.actions}>
           <TouchableOpacity style={[styles.restartBtn, Shadow.sm]} onPress={handleRestart} activeOpacity={0.8}>
-            <Text style={styles.restartText}>↺  Nova avaliação</Text>
+            <Feather name="rotate-ccw" size={16} color={C.textSecondary} />
+            <Text style={styles.restartText}>Nova avaliação</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.homeBtn, Shadow.primary]} onPress={handleRestart} activeOpacity={0.9}>
             <LinearGradient colors={accentGrad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.homeBtnGradient}>
@@ -198,11 +201,11 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   big5Wrap:    { gap: Spacing.sm, marginTop: 4 },
   careersWrap: { gap: Spacing.sm, marginTop: 4 },
 
-  disclaimer:     { marginHorizontal: Spacing.lg, backgroundColor: C.card, borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: C.border },
-  disclaimerText: { fontSize: Typography.xs, color: C.textMuted, lineHeight: 18 },
+  disclaimer:     { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm, marginHorizontal: Spacing.lg, backgroundColor: C.card, borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: C.border },
+  disclaimerText: { flex: 1, fontSize: Typography.xs, color: C.textMuted, lineHeight: 18 },
 
   actions:         { marginHorizontal: Spacing.lg, flexDirection: 'row', gap: Spacing.sm },
-  restartBtn:      { flex: 1, backgroundColor: C.card, borderRadius: Radius.lg, paddingVertical: 14, alignItems: 'center', borderWidth: 1, borderColor: C.border },
+  restartBtn:      { flex: 1, flexDirection: 'row', gap: Spacing.xs, backgroundColor: C.card, borderRadius: Radius.lg, paddingVertical: 14, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.border },
   restartText:     { fontSize: Typography.base, fontWeight: '700', color: C.textSecondary },
   homeBtn:         { flex: 2, borderRadius: Radius.lg, overflow: 'hidden' },
   homeBtnGradient: { paddingVertical: 14, alignItems: 'center' },

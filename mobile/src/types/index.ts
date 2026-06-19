@@ -10,12 +10,15 @@ export interface Question {
   text: string;
 }
 
+export type IconFamily = 'Feather' | 'Ionicons';
+
 export interface DimensionGroup {
   dimension: RiasecDimension;
   name: string;
   color: string;
   bgColor: string;
-  emoji: string;
+  iconFamily: IconFamily;
+  iconName: string;
   description: string;
   questions: Question[];
 }
@@ -62,7 +65,23 @@ export interface CourseRecommendation {
   titulo: string;
   instituicao: string;
   descricao: string;
+  area: string;
+  universidades: string[];
   empregabilidade_provincia: string;
+}
+
+export interface UniversityRequirement {
+  codigo: string;
+  universidade: string;
+  curso_titulo: string;
+  duracao: string;
+  modalidade: string;
+  cidade: string;
+  disciplinas_exigidas: string[];
+  nota_minima: string;
+  documentos: string[];
+  website: string;
+  contacto: string;
 }
 
 export interface CareerSuggestion {
@@ -129,6 +148,7 @@ export type AppStackParamList = {
   Loading:          undefined;
   Results:          undefined;
   HistoryDetail:    { record: AssessmentRecord };
+  UniversityDetail: { codigo: string; area: string; cursoTitulo: string };
 };
 
 export type TabParamList = {

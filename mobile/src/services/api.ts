@@ -1,6 +1,6 @@
 // ─── API Service Layer ─────────────────────────────────────────────────────────
 
-import { AssessmentRecord, Demographics, PredictionResponse } from '../types';
+import { AssessmentRecord, Demographics, PredictionResponse, UniversityRequirement } from '../types';
 
 // ── Config ────────────────────────────────────────────────────────────────────
 
@@ -101,6 +101,13 @@ export async function predict(
     method: 'POST',
     body: JSON.stringify(body),
   });
+}
+
+export async function fetchUniversityRequirement(
+  codigo: string,
+  area: string,
+): Promise<UniversityRequirement> {
+  return request<UniversityRequirement>(`/universities/${encodeURIComponent(codigo)}/${encodeURIComponent(area)}`);
 }
 
 // ── Auth ──────────────────────────────────────────────────────────────────────

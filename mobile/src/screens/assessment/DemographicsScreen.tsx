@@ -3,19 +3,35 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import {
-  AppStackParamList, Demographics, FaixaEtaria, TipoEscola, ClasseActual, Provincia, PROVINCIAS,
+  AppStackParamList, Demographics, FaixaEtaria, TipoEscola, ClasseActual, Provincia, PROVINCIAS, IconFamily,
 } from '../../types';
 import { useAssessmentStore } from '../../store/useAssessmentStore';
 import { useColors, ColorsType, Spacing, Radius, Typography, Shadow } from '../../theme';
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Demographics'>;
 
-const GENDERS   = [{ value: 1, label: 'Masculino', emoji: '♂' }, { value: 2, label: 'Feminino', emoji: '♀' }, { value: 3, label: 'Outro', emoji: '⚧' }] as const;
-const EDUCATION = [{ value: 1, label: 'Ensino Básico', emoji: '📚' }, { value: 2, label: 'Ensino Médio', emoji: '🏫' }, { value: 3, label: 'Licenciatura', emoji: '🎓' }, { value: 4, label: 'Pós-graduação', emoji: '🔬' }] as const;
+function DimIcon({ family, name, size, color }: { family: IconFamily; name: string; size: number; color: string }) {
+  return family === 'Ionicons'
+    ? <Ionicons name={name as any} size={size} color={color} />
+    : <Feather name={name as any} size={size} color={color} />;
+}
+
+const GENDERS = [
+  { value: 1, label: 'Masculino', family: 'Ionicons' as IconFamily, icon: 'male' },
+  { value: 2, label: 'Feminino',  family: 'Ionicons' as IconFamily, icon: 'female' },
+  { value: 3, label: 'Outro',     family: 'Ionicons' as IconFamily, icon: 'transgender-outline' },
+] as const;
+const EDUCATION = [
+  { value: 1, label: 'Ensino Básico',   family: 'Feather' as IconFamily,  icon: 'book' },
+  { value: 2, label: 'Ensino Médio',    family: 'Feather' as IconFamily,  icon: 'book-open' },
+  { value: 3, label: 'Licenciatura',    family: 'Ionicons' as IconFamily, icon: 'school-outline' },
+  { value: 4, label: 'Pós-graduação',   family: 'Feather' as IconFamily,  icon: 'award' },
+] as const;
 const TIPOS_ESCOLA: TipoEscola[] = ['Pública', 'Privada', 'Semi-privada'];
 const CLASSES: ClasseActual[] = [
   '10ª classe', '11ª classe', '12ª classe',
@@ -118,7 +134,7 @@ export default function DemographicsScreen({ navigation }: Props) {
           <View style={styles.section}>
             <Text style={styles.sectionLabel}>Cidade</Text>
             <View style={styles.ageInputWrap}>
-              <Text style={styles.ageIcon}>📍</Text>
+              <Feather name="map-pin" size={18} color={C.textMuted} />
               <TextInput
                 style={styles.cidadeInput} value={cidade} onChangeText={setCidade}
                 placeholder="Ex: Beira" placeholderTextColor={C.textMuted}
@@ -167,7 +183,7 @@ export default function DemographicsScreen({ navigation }: Props) {
                   {gender === g.value && (
                     <LinearGradient colors={[`${C.primary}30`, `${C.primary}10`]} style={StyleSheet.absoluteFill} />
                   )}
-                  <Text style={styles.chipEmoji}>{g.emoji}</Text>
+                  <DimIcon family={g.family} name={g.icon} size={22} color={gender === g.value ? C.primaryLight : C.textSecondary} />
                   <Text style={[styles.chipLabel, gender === g.value && { color: C.primaryLight, fontWeight: '700' }]}>{g.label}</Text>
                 </TouchableOpacity>
               ))}
@@ -186,7 +202,7 @@ export default function DemographicsScreen({ navigation }: Props) {
                   {education === e.value && (
                     <LinearGradient colors={[`${C.accent}20`, `${C.accent}08`]} style={StyleSheet.absoluteFill} />
                   )}
-                  <Text style={styles.eduEmoji}>{e.emoji}</Text>
+                  <DimIcon family={e.family} name={e.icon} size={24} color={education === e.value ? C.accentLight : C.textSecondary} />
                   <Text style={[styles.eduLabel, education === e.value && { color: C.accentLight, fontWeight: '700' }]}>{e.label}</Text>
                 </TouchableOpacity>
               ))}
@@ -194,7 +210,8 @@ export default function DemographicsScreen({ navigation }: Props) {
           </View>
 
           <View style={styles.privacyNote}>
-            <Text style={styles.privacyText}>🔒 Os dados são usados apenas para melhorar as sugestões e para fins de investigação académica. Não são partilhados.</Text>
+            <Feather name="lock" size={14} color={C.textSecondary} />
+            <Text style={styles.privacyText}>Os dados são usados apenas para melhorar as sugestões e para fins de investigação académica. Não são partilhados.</Text>
           </View>
 
         </Animated.View>
@@ -231,12 +248,10 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   sectionLabel: { fontSize: Typography.sm, fontWeight: '700', color: C.textSecondary, textTransform: 'uppercase', letterSpacing: 0.6 },
 
   ageInputWrap: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.card, borderRadius: Radius.lg, borderWidth: 1, borderColor: C.border, paddingHorizontal: Spacing.md, height: 56, gap: Spacing.md },
-  ageIcon:  { fontSize: 20 },
   cidadeInput: { flex: 1, fontSize: Typography.lg, fontWeight: '700', color: C.text, height: '100%' },
 
   chipRow:  { flexDirection: 'row', gap: Spacing.sm },
   chip:     { flex: 1, height: 68, backgroundColor: C.card, borderRadius: Radius.lg, borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center', gap: 4, overflow: 'hidden' },
-  chipEmoji:{ fontSize: 22 },
   chipLabel:{ fontSize: Typography.xs, fontWeight: '600', color: C.textSecondary },
 
   tagGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
@@ -245,11 +260,10 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
 
   eduGrid:   { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   eduCard:   { width: '47%', height: 80, backgroundColor: C.card, borderRadius: Radius.lg, borderWidth: 1.5, borderColor: C.border, alignItems: 'center', justifyContent: 'center', gap: 4, overflow: 'hidden' },
-  eduEmoji:  { fontSize: 24 },
   eduLabel:  { fontSize: Typography.xs, fontWeight: '600', color: C.textSecondary, textAlign: 'center' },
 
-  privacyNote: { backgroundColor: C.infoBg, borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: C.info + '30' },
-  privacyText: { fontSize: Typography.sm, color: C.textSecondary, lineHeight: 18 },
+  privacyNote: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm, backgroundColor: C.infoBg, borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: C.info + '30' },
+  privacyText: { flex: 1, fontSize: Typography.sm, color: C.textSecondary, lineHeight: 18 },
 
   footer:           { position: 'absolute', bottom: 0, left: 0, right: 0, padding: Spacing.lg, backgroundColor: C.background, borderTopWidth: 1, borderTopColor: C.border, gap: Spacing.sm },
   submitBtn:        { borderRadius: Radius.lg, overflow: 'hidden' },

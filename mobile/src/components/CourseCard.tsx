@@ -1,7 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Pressable } from 'react-native';
+import { Ionicons, Feather } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useColors, ColorsType, Radius, Shadow, Spacing, Typography } from '../theme';
-import { CourseRecommendation } from '../types';
+import { AppStackParamList, CourseRecommendation } from '../types';
+
+type Nav = NativeStackNavigationProp<AppStackParamList>;
 
 interface Props {
   course: CourseRecommendation;
@@ -9,8 +14,6 @@ interface Props {
   accentColor?: string;
   provincia?: string | null;
 }
-
-const RANK_EMOJIS = ['🎓', '📚', '🏫'];
 
 const EMPREGABILIDADE_LABEL: Record<string, string> = {
   Alto: 'Alta', Médio: 'Média', Baixo: 'Baixa',
@@ -27,6 +30,7 @@ export default function CourseCard({ course, index, accentColor, provincia }: Pr
   const C       = useColors();
   const styles  = useMemo(() => makeStyles(C), [C]);
   const accent  = accentColor ?? C.primary;
+  const navigation = useNavigation<Nav>();
   const [modalVisible, setModalVisible] = useState(false);
 
   const nivel = course.empregabilidade_provincia;
@@ -36,7 +40,7 @@ export default function CourseCard({ course, index, accentColor, provincia }: Pr
   return (
     <View style={[styles.card, Shadow.sm, { borderLeftColor: accent }]}>
       <View style={[styles.badge, { backgroundColor: accent + '18' }]}>
-        <Text style={styles.rankEmoji}>{RANK_EMOJIS[index] ?? '🎓'}</Text>
+        <Ionicons name="school-outline" size={22} color={accent} />
       </View>
       <View style={styles.content}>
         <View style={styles.titleRow}>
@@ -54,6 +58,22 @@ export default function CourseCard({ course, index, accentColor, provincia }: Pr
           <Text style={[styles.institution, { color: accent }]}>{course.instituicao}</Text>
         </View>
         <Text style={styles.desc}>{course.descricao}</Text>
+
+        {course.universidades.length > 0 && (
+          <View style={styles.uniRow}>
+            {course.universidades.map(codigo => (
+              <TouchableOpacity
+                key={codigo}
+                style={styles.uniChip}
+                onPress={() => navigation.navigate('UniversityDetail', { codigo, area: course.area, cursoTitulo: course.titulo })}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.uniChipText}>{codigo}</Text>
+                <Feather name="chevron-right" size={12} color={C.textSecondary} />
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
       </View>
 
       <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={() => setModalVisible(false)}>
@@ -87,7 +107,6 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
     width: 44, height: 44, borderRadius: Radius.md,
     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
-  rankEmoji:        { fontSize: 22 },
   content:          { flex: 1, gap: 4 },
   titleRow:         { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   title:            { flex: 1, fontSize: Typography.base, fontWeight: '700' },
@@ -96,6 +115,10 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   institutionBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.sm },
   institution:      { fontSize: Typography.xs, fontWeight: '600' },
   desc:             { fontSize: Typography.sm, color: C.textSecondary, lineHeight: 19 },
+
+  uniRow:      { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 },
+  uniChip:     { flexDirection: 'row', alignItems: 'center', gap: 2, backgroundColor: C.surface, borderRadius: Radius.full, borderWidth: 1, borderColor: C.border, paddingHorizontal: 10, paddingVertical: 4 },
+  uniChipText: { fontSize: Typography.xs, fontWeight: '700', color: C.text },
 
   modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center', padding: Spacing.xl },
   modalCard:     { width: '100%', backgroundColor: C.card, borderRadius: Radius.xl, padding: Spacing.lg, gap: Spacing.sm, borderWidth: 1, borderColor: C.border },

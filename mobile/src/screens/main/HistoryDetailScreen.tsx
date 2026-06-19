@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -39,7 +40,7 @@ export default function HistoryDetailScreen({ route, navigation }: Props) {
 
         <LinearGradient colors={C.heroGradient} style={[styles.hero, { paddingTop: insets.top + Spacing.sm }]}>
           <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-            <Text style={styles.backIcon}>←</Text>
+            <Feather name="arrow-left" size={18} color={C.textSecondary} />
             <Text style={styles.backText}>Histórico</Text>
           </TouchableOpacity>
           <Text style={styles.heroDate}>{new Date(date).toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</Text>
@@ -79,7 +80,8 @@ export default function HistoryDetailScreen({ route, navigation }: Props) {
         </View>
 
         <View style={styles.nota}>
-          <Text style={styles.notaText}>ℹ  {nota}</Text>
+          <Feather name="info" size={14} color={C.textMuted} />
+          <Text style={styles.notaText}>{nota}</Text>
         </View>
 
       </ScrollView>
@@ -93,7 +95,6 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
 
   hero: { paddingHorizontal: Spacing.lg, paddingBottom: Spacing.xl, gap: Spacing.sm, alignItems: 'flex-start' },
   backBtn:  { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: Spacing.sm },
-  backIcon: { fontSize: 20, color: C.textSecondary },
   backText: { fontSize: Typography.base, color: C.textSecondary, fontWeight: '500' },
 
   heroDate: { fontSize: Typography.sm, color: C.textSecondary, textTransform: 'capitalize' },
@@ -118,6 +119,6 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   barFill:   { height: '100%', borderRadius: Radius.full },
   scoreVal:  { width: 28, fontSize: Typography.sm, fontWeight: '700', textAlign: 'right' },
 
-  nota:     { marginHorizontal: Spacing.lg, marginTop: Spacing.lg, backgroundColor: C.card, borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: C.border },
-  notaText: { fontSize: Typography.xs, color: C.textMuted, lineHeight: 18 },
+  nota:     { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm, marginHorizontal: Spacing.lg, marginTop: Spacing.lg, backgroundColor: C.card, borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: C.border },
+  notaText: { flex: 1, fontSize: Typography.xs, color: C.textMuted, lineHeight: 18 },
 });

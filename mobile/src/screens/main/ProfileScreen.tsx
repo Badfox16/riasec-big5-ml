@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, Switch } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAuthStore }       from '../../store/useAuthStore';
@@ -11,19 +12,21 @@ import { useThemeStore }      from '../../store/useThemeStore';
 import { useColors, ColorsType, Spacing, Radius, Typography, Shadow } from '../../theme';
 
 function Row({ icon, label, value, onPress, danger, right }: {
-  icon: string; label: string; value?: string;
+  icon: keyof typeof Feather.glyphMap; label: string; value?: string;
   onPress?: () => void; danger?: boolean; right?: React.ReactNode;
 }) {
   const Colors = useColors();
   const styles = useMemo(() => makeStyles(Colors), [Colors]);
   return (
     <TouchableOpacity style={styles.row} onPress={onPress} activeOpacity={onPress ? 0.7 : 1} disabled={!onPress && !right}>
-      <Text style={styles.rowIcon}>{icon}</Text>
+      <View style={styles.rowIconWrap}>
+        <Feather name={icon} size={18} color={danger ? Colors.error : Colors.textSecondary} />
+      </View>
       <View style={styles.rowBody}>
         <Text style={[styles.rowLabel, danger && { color: Colors.error }]}>{label}</Text>
         {value ? <Text style={styles.rowValue}>{value}</Text> : null}
       </View>
-      {right ?? (onPress && <Text style={[styles.rowArrow, danger && { color: Colors.error }]}>›</Text>)}
+      {right ?? (onPress && <Feather name="chevron-right" size={18} color={danger ? Colors.error : Colors.textMuted} />)}
     </TouchableOpacity>
   );
 }
@@ -63,7 +66,7 @@ export default function ProfileScreen() {
               <Text style={styles.avatarText}>{initials}</Text>
             </LinearGradient>
             <View style={styles.avatarBadge}>
-              <Text style={styles.avatarBadgeText}>✦</Text>
+              <Feather name="star" size={11} color="#FFF" />
             </View>
           </View>
           <Text style={styles.name}>{user?.name}</Text>
@@ -89,11 +92,11 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Conta</Text>
           <View style={[styles.card, Shadow.sm]}>
-            <Row icon="👤" label="Nome"  value={user?.name} />
+            <Row icon="user"  label="Nome"  value={user?.name} />
             <View style={styles.sep} />
-            <Row icon="✉"  label="Email" value={user?.email} />
+            <Row icon="mail"  label="Email" value={user?.email} />
             <View style={styles.sep} />
-            <Row icon="🔒" label="Palavra-passe" value="••••••••" onPress={() => {}} />
+            <Row icon="lock"  label="Palavra-passe" value="••••••••" onPress={() => {}} />
           </View>
         </View>
 
@@ -101,7 +104,7 @@ export default function ProfileScreen() {
           <Text style={styles.sectionTitle}>Aparência</Text>
           <View style={[styles.card, Shadow.sm]}>
             <Row
-              icon={isDark ? '🌙' : '☀️'}
+              icon={isDark ? 'moon' : 'sun'}
               label="Tema"
               value={isDark ? 'Escuro' : 'Claro'}
               right={
@@ -119,26 +122,27 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Avaliações</Text>
           <View style={[styles.card, Shadow.sm]}>
-            <Row icon="📋" label="Total de avaliações" value={`${history.length} realizadas`} />
+            <Row icon="clipboard" label="Total de avaliações" value={`${history.length} realizadas`} />
             <View style={styles.sep} />
-            <Row icon="🗑" label="Limpar histórico" onPress={handleClearHistory} danger />
+            <Row icon="trash-2" label="Limpar histórico" onPress={handleClearHistory} danger />
           </View>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Sobre</Text>
           <View style={[styles.card, Shadow.sm]}>
-            <Row icon="ℹ"  label="Sobre o eiVocação" value="v1.0.0" onPress={() => {}} />
+            <Row icon="info"      label="Sobre o eiVocação" value="v1.0.0" onPress={() => {}} />
             <View style={styles.sep} />
-            <Row icon="🔐" label="Política de privacidade" onPress={() => {}} />
+            <Row icon="shield"    label="Política de privacidade" onPress={() => {}} />
             <View style={styles.sep} />
-            <Row icon="📄" label="Termos de uso" onPress={() => {}} />
+            <Row icon="file-text" label="Termos de uso" onPress={() => {}} />
           </View>
         </View>
 
         <View style={[styles.section, { marginTop: Spacing.sm }]}>
           <TouchableOpacity style={[styles.logoutBtn, Shadow.sm]} onPress={handleLogout} activeOpacity={0.8}>
-            <Text style={styles.logoutText}>🚪  Terminar sessão</Text>
+            <Feather name="log-out" size={16} color={Colors.error} />
+            <Text style={styles.logoutText}>Terminar sessão</Text>
           </TouchableOpacity>
         </View>
 
@@ -181,14 +185,13 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   card:  { backgroundColor: C.card, borderRadius: Radius.lg, borderWidth: 1, borderColor: C.border, overflow: 'hidden' },
   sep:   { height: 1, backgroundColor: C.border, marginLeft: 48 + Spacing.md },
 
-  row:       { flexDirection: 'row', alignItems: 'center', padding: Spacing.md, gap: Spacing.md },
-  rowIcon:   { fontSize: 20, width: 28, textAlign: 'center' },
-  rowBody:   { flex: 1, gap: 1 },
-  rowLabel:  { fontSize: Typography.base, fontWeight: '600', color: C.text },
-  rowValue:  { fontSize: Typography.sm, color: C.textSecondary },
-  rowArrow:  { fontSize: 20, color: C.textMuted },
+  row:        { flexDirection: 'row', alignItems: 'center', padding: Spacing.md, gap: Spacing.md },
+  rowIconWrap:{ width: 28, alignItems: 'center' },
+  rowBody:    { flex: 1, gap: 1 },
+  rowLabel:   { fontSize: Typography.base, fontWeight: '600', color: C.text },
+  rowValue:   { fontSize: Typography.sm, color: C.textSecondary },
 
-  logoutBtn:  { backgroundColor: C.errorBg, borderRadius: Radius.lg, padding: Spacing.md, alignItems: 'center', borderWidth: 1, borderColor: C.error + '30' },
+  logoutBtn:  { flexDirection: 'row', gap: Spacing.xs, backgroundColor: C.errorBg, borderRadius: Radius.lg, padding: Spacing.md, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.error + '30' },
   logoutText: { fontSize: Typography.base, fontWeight: '700', color: C.error },
 
   footer: { textAlign: 'center', fontSize: Typography.xs, color: C.textMuted, lineHeight: 18, marginTop: Spacing.xl, paddingHorizontal: Spacing.xl },

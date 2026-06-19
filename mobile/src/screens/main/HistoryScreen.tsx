@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -35,7 +36,7 @@ function HistoryItem({ item, onPress }: { item: AssessmentRecord; onPress: () =>
             <Text style={styles.itemDemog}>{EDUCATION_LABELS[item.demographics.education]} · {item.demographics.provincia}</Text>
           )}
         </View>
-        <Text style={styles.arrow}>›</Text>
+        <Feather name="chevron-right" size={20} color={Colors.textMuted} />
       </View>
     </TouchableOpacity>
   );
@@ -59,7 +60,9 @@ export default function HistoryScreen() {
 
       {history.length === 0 ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyEmoji}>📋</Text>
+          <View style={styles.emptyIconWrap}>
+            <Feather name="clipboard" size={32} color={Colors.textMuted} />
+          </View>
           <Text style={styles.emptyTitle}>Sem histórico ainda</Text>
           <Text style={styles.emptySub}>Faz a tua primeira avaliação RIASEC para ver os resultados aqui.</Text>
         </View>
@@ -97,10 +100,9 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   itemDate:    { fontSize: Typography.sm, fontWeight: '600', color: C.text },
   itemCareers: { fontSize: Typography.xs, color: C.textSecondary },
   itemDemog:   { fontSize: Typography.xs, color: C.textMuted },
-  arrow:       { fontSize: 22, color: C.textMuted },
 
-  empty:      { flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl, gap: Spacing.md },
-  emptyEmoji: { fontSize: 56 },
-  emptyTitle: { fontSize: Typography.xl, fontWeight: '800', color: C.text },
+  empty:        { flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl, gap: Spacing.md },
+  emptyIconWrap:{ width: 88, height: 88, borderRadius: 44, backgroundColor: C.surface, alignItems: 'center', justifyContent: 'center' },
+  emptyTitle:   { fontSize: Typography.xl, fontWeight: '800', color: C.text },
   emptySub:   { fontSize: Typography.base, color: C.textSecondary, textAlign: 'center', lineHeight: 22 },
 });

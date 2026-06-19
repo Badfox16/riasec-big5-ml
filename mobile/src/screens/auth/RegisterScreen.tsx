@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView, Platform, ScrollView, Animated, ActivityIndicator,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -61,13 +62,13 @@ export default function RegisterScreen({ navigation }: Props) {
         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
 
           <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-            <Text style={styles.backIcon}>←</Text>
+            <Feather name="arrow-left" size={18} color={Colors.textSecondary} />
             <Text style={styles.backText}>Voltar</Text>
           </TouchableOpacity>
 
           <View style={styles.header}>
             <LinearGradient colors={Colors.accentGradient} style={styles.logoCircle}>
-              <Text style={styles.logoEmoji}>✨</Text>
+              <Feather name="user-plus" size={28} color="#FFF" />
             </LinearGradient>
             <Text style={styles.title}>Criar conta</Text>
             <Text style={styles.subtitle}>Começa a tua jornada vocacional</Text>
@@ -77,7 +78,7 @@ export default function RegisterScreen({ navigation }: Props) {
             <View style={styles.fieldGroup}>
               <Text style={styles.label}>Nome completo</Text>
               <View style={styles.inputWrap}>
-                <Text style={styles.inputIcon}>👤</Text>
+                <Feather name="user" size={16} color={Colors.textMuted} />
                 <TextInput
                   style={styles.input} value={name} onChangeText={setName}
                   placeholder="O teu nome" placeholderTextColor={Colors.textMuted}
@@ -89,7 +90,7 @@ export default function RegisterScreen({ navigation }: Props) {
             <View style={styles.fieldGroup}>
               <Text style={styles.label}>Email</Text>
               <View style={styles.inputWrap}>
-                <Text style={styles.inputIcon}>✉</Text>
+                <Feather name="mail" size={16} color={Colors.textMuted} />
                 <TextInput
                   style={styles.input} value={email} onChangeText={setEmail}
                   placeholder="o.teu@email.com" placeholderTextColor={Colors.textMuted}
@@ -102,7 +103,7 @@ export default function RegisterScreen({ navigation }: Props) {
             <View style={styles.fieldGroup}>
               <Text style={styles.label}>Palavra-passe</Text>
               <View style={styles.inputWrap}>
-                <Text style={styles.inputIcon}>🔒</Text>
+                <Feather name="lock" size={16} color={Colors.textMuted} />
                 <TextInput
                   style={styles.input} value={password} onChangeText={setPassword}
                   placeholder="mínimo 6 caracteres" placeholderTextColor={Colors.textMuted}
@@ -110,7 +111,7 @@ export default function RegisterScreen({ navigation }: Props) {
                   selectionColor={Colors.accentLight}
                 />
                 <TouchableOpacity onPress={() => setShowPass(v => !v)} style={styles.eyeBtn}>
-                  <Text style={styles.eyeIcon}>{showPass ? '👁' : '🙈'}</Text>
+                  <Feather name={showPass ? 'eye-off' : 'eye'} size={16} color={Colors.textMuted} />
                 </TouchableOpacity>
               </View>
               {password.length > 0 && (
@@ -124,7 +125,10 @@ export default function RegisterScreen({ navigation }: Props) {
             </View>
 
             {error ? (
-              <View style={styles.errorBanner}><Text style={styles.errorText}>⚠ {error}</Text></View>
+              <View style={styles.errorBanner}>
+                <Feather name="alert-triangle" size={14} color={Colors.error} />
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
             ) : null}
 
             <Text style={styles.termsNote}>
@@ -168,7 +172,6 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   blobBottom: { backgroundColor: C.primary, bottom: -80, right: -80 },
 
   backBtn:  { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, marginBottom: Spacing.lg },
-  backIcon: { fontSize: 20, color: C.textSecondary },
   backText: { fontSize: Typography.base, color: C.textSecondary, fontWeight: '500' },
 
   header:    { alignItems: 'center', marginBottom: Spacing.xl, gap: Spacing.sm },
@@ -176,7 +179,6 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
     width: 64, height: 64, borderRadius: 32,
     alignItems: 'center', justifyContent: 'center', marginBottom: 4, ...Shadow.accent,
   },
-  logoEmoji: { fontSize: 28 },
   title:     { fontSize: Typography['2xl'], fontWeight: '800', color: C.text },
   subtitle:  { fontSize: Typography.base, color: C.textSecondary },
 
@@ -191,20 +193,19 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
     borderRadius: Radius.md, borderWidth: 1, borderColor: C.border,
     paddingHorizontal: Spacing.md, height: 52, gap: Spacing.sm,
   },
-  inputIcon: { fontSize: 16, color: C.textMuted },
   input:     { flex: 1, fontSize: Typography.base, color: C.text, height: '100%' },
   eyeBtn:    { padding: 4 },
-  eyeIcon:   { fontSize: 16 },
 
   strengthRow:    { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, marginTop: 6 },
   strengthSegment:{ flex: 1, height: 3, borderRadius: 2 },
   strengthLabel:  { fontSize: Typography.xs, fontWeight: '600', width: 52, textAlign: 'right' },
 
   errorBanner: {
+    flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.xs,
     backgroundColor: C.errorBg, borderRadius: Radius.sm,
     padding: Spacing.sm, borderWidth: 1, borderColor: C.error + '40',
   },
-  errorText: { fontSize: Typography.sm, color: C.error, fontWeight: '500' },
+  errorText: { flex: 1, fontSize: Typography.sm, color: C.error, fontWeight: '500' },
 
   termsNote: { fontSize: Typography.xs, color: C.textMuted, lineHeight: 18, textAlign: 'center' },
   termsLink: { color: C.accentLight, fontWeight: '600' },

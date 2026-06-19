@@ -10,7 +10,8 @@ export const DIMENSION_GROUPS: DimensionGroup[] = [
     name: 'Realista',
     color: Colors.riasec.R,
     bgColor: Colors.riasecBg.R,
-    emoji: '🔧',
+    iconFamily: 'Feather',
+    iconName: 'tool',
     description: 'Prático, técnico, orientado para o trabalho manual e mecânico.',
     questions: [
       { id: 1,  code: 'R1', dimension: 'R', dimensionName: 'Realista', text: 'Verificar a qualidade de peças antes da expedição' },
@@ -28,7 +29,8 @@ export const DIMENSION_GROUPS: DimensionGroup[] = [
     name: 'Investigativo',
     color: Colors.riasec.I,
     bgColor: Colors.riasecBg.I,
-    emoji: '🔬',
+    iconFamily: 'Ionicons',
+    iconName: 'flask-outline',
     description: 'Analítico, científico, orientado para a pesquisa e resolução de problemas.',
     questions: [
       { id: 9,  code: 'I1', dimension: 'I', dimensionName: 'Investigativo', text: 'Estudar a estrutura do corpo humano' },
@@ -46,7 +48,8 @@ export const DIMENSION_GROUPS: DimensionGroup[] = [
     name: 'Artístico',
     color: Colors.riasec.A,
     bgColor: Colors.riasecBg.A,
-    emoji: '🎨',
+    iconFamily: 'Ionicons',
+    iconName: 'color-palette-outline',
     description: 'Criativo, expressivo, orientado para a arte e inovação.',
     questions: [
       { id: 17, code: 'A1', dimension: 'A', dimensionName: 'Artístico', text: 'Fazer esboços, desenhos ou pinturas' },
@@ -64,7 +67,8 @@ export const DIMENSION_GROUPS: DimensionGroup[] = [
     name: 'Social',
     color: Colors.riasec.S,
     bgColor: Colors.riasecBg.S,
-    emoji: '🤝',
+    iconFamily: 'Feather',
+    iconName: 'users',
     description: 'Empático, comunicativo, orientado para ajudar e ensinar pessoas.',
     questions: [
       { id: 25, code: 'S1', dimension: 'S', dimensionName: 'Social', text: 'Dar orientação de carreira às pessoas' },
@@ -82,7 +86,8 @@ export const DIMENSION_GROUPS: DimensionGroup[] = [
     name: 'Empreendedor',
     color: Colors.riasec.E,
     bgColor: Colors.riasecBg.E,
-    emoji: '💼',
+    iconFamily: 'Feather',
+    iconName: 'briefcase',
     description: 'Persuasivo, líder, orientado para negócios e gestão.',
     questions: [
       { id: 33, code: 'E1', dimension: 'E', dimensionName: 'Empreendedor', text: 'Vender franchisings de restaurantes' },
@@ -100,7 +105,8 @@ export const DIMENSION_GROUPS: DimensionGroup[] = [
     name: 'Convencional',
     color: Colors.riasec.C,
     bgColor: Colors.riasecBg.C,
-    emoji: '📊',
+    iconFamily: 'Feather',
+    iconName: 'bar-chart-2',
     description: 'Organizado, detalhista, orientado para dados e procedimentos.',
     questions: [
       { id: 41, code: 'C1', dimension: 'C', dimensionName: 'Convencional', text: 'Gerar folhas de pagamento mensais' },

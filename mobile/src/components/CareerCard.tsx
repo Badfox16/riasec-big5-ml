@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import { useColors, ColorsType, Radius, Shadow, Spacing, Typography } from '../theme';
 import { CareerSuggestion } from '../types';
 
@@ -9,8 +10,6 @@ interface Props {
   accentColor?: string;
 }
 
-const RANK_EMOJIS = ['🥇', '🥈', '🥉'];
-
 export default function CareerCard({ career, index, accentColor }: Props) {
   const Colors = useColors();
   const styles = useMemo(() => makeStyles(Colors), [Colors]);
@@ -19,7 +18,9 @@ export default function CareerCard({ career, index, accentColor }: Props) {
   return (
     <View style={[styles.card, Shadow.sm, { borderLeftColor: accent }]}>
       <View style={[styles.badge, { backgroundColor: accent + '18' }]}>
-        <Text style={styles.rankEmoji}>{RANK_EMOJIS[index] ?? '⭐'}</Text>
+        {index < 3
+          ? <Ionicons name="medal-outline" size={22} color={accent} />
+          : <Feather name="star" size={20} color={accent} />}
       </View>
       <View style={styles.content}>
         <Text style={[styles.title, { color: accent }]}>{career.titulo}</Text>
@@ -40,7 +41,6 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
     width: 44, height: 44, borderRadius: Radius.md,
     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
-  rankEmoji: { fontSize: 22 },
   content:   { flex: 1 },
   title:     { fontSize: Typography.base, fontWeight: '700', marginBottom: 3 },
   desc:      { fontSize: Typography.sm, color: C.textSecondary, lineHeight: 19 },

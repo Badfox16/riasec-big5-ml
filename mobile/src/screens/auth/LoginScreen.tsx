@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView, Platform, ScrollView, Animated, ActivityIndicator,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -57,7 +58,7 @@ export default function LoginScreen({ navigation }: Props) {
 
           <View style={styles.brand}>
             <LinearGradient colors={Colors.primaryGradient} style={styles.logoCircle}>
-              <Text style={styles.logoEmoji}>🎯</Text>
+              <Feather name="target" size={32} color="#FFF" />
             </LinearGradient>
             <Text style={styles.appName}>eiVocação</Text>
             <Text style={styles.tagline}>Descobre o teu caminho profissional</Text>
@@ -70,7 +71,7 @@ export default function LoginScreen({ navigation }: Props) {
             <View style={styles.fieldGroup}>
               <Text style={styles.label}>Email</Text>
               <View style={styles.inputWrap}>
-                <Text style={styles.inputIcon}>✉</Text>
+                <Feather name="mail" size={16} color={Colors.textMuted} />
                 <TextInput
                   style={styles.input}
                   value={email}
@@ -88,7 +89,7 @@ export default function LoginScreen({ navigation }: Props) {
             <View style={styles.fieldGroup}>
               <Text style={styles.label}>Palavra-passe</Text>
               <View style={styles.inputWrap}>
-                <Text style={styles.inputIcon}>🔒</Text>
+                <Feather name="lock" size={16} color={Colors.textMuted} />
                 <TextInput
                   style={styles.input}
                   value={password}
@@ -100,14 +101,15 @@ export default function LoginScreen({ navigation }: Props) {
                   selectionColor={Colors.primaryLight}
                 />
                 <TouchableOpacity onPress={() => setShowPass(v => !v)} style={styles.eyeBtn}>
-                  <Text style={styles.eyeIcon}>{showPass ? '👁' : '🙈'}</Text>
+                  <Feather name={showPass ? 'eye-off' : 'eye'} size={16} color={Colors.textMuted} />
                 </TouchableOpacity>
               </View>
             </View>
 
             {error ? (
               <View style={styles.errorBanner}>
-                <Text style={styles.errorText}>⚠ {error}</Text>
+                <Feather name="alert-triangle" size={14} color={Colors.error} />
+                <Text style={styles.errorText}>{error}</Text>
               </View>
             ) : null}
 
@@ -167,7 +169,6 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
     width: 72, height: 72, borderRadius: 36,
     alignItems: 'center', justifyContent: 'center', marginBottom: 4, ...Shadow.primary,
   },
-  logoEmoji: { fontSize: 32 },
   appName:   { fontSize: Typography['2xl'], fontWeight: '800', color: C.text, letterSpacing: -0.5 },
   tagline:   { fontSize: Typography.sm, color: C.textSecondary },
 
@@ -186,16 +187,15 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
     borderWidth: 1, borderColor: C.border,
     paddingHorizontal: Spacing.md, height: 52, gap: Spacing.sm,
   },
-  inputIcon: { fontSize: 16, color: C.textMuted },
   input:     { flex: 1, fontSize: Typography.base, color: C.text, height: '100%' },
   eyeBtn:    { padding: 4 },
-  eyeIcon:   { fontSize: 16 },
 
   errorBanner: {
+    flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.xs,
     backgroundColor: C.errorBg, borderRadius: Radius.sm,
     padding: Spacing.sm, borderWidth: 1, borderColor: C.error + '40',
   },
-  errorText: { fontSize: Typography.sm, color: C.error, fontWeight: '500' },
+  errorText: { flex: 1, fontSize: Typography.sm, color: C.error, fontWeight: '500' },
 
   ctaBtn:         { borderRadius: Radius.lg, overflow: 'hidden', marginTop: Spacing.xs },
   ctaBtnDisabled: { opacity: 0.5 },

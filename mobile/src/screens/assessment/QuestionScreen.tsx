@@ -3,10 +3,11 @@
 import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { AppStackParamList } from '../../types';
+import { AppStackParamList, IconFamily } from '../../types';
 import { useAssessmentStore } from '../../store/useAssessmentStore';
 import { DIMENSION_GROUPS } from '../../data/questions';
 import { useColors, ColorsType, Colors, Spacing, Radius, Typography, Shadow } from '../../theme';
@@ -15,25 +16,32 @@ type Props = NativeStackScreenProps<AppStackParamList, 'Question'>;
 
 const { width } = Dimensions.get('window');
 
+function DimIcon({ family, name, size, color }: { family: IconFamily; name: string; size: number; color: string }) {
+  return family === 'Ionicons'
+    ? <Ionicons name={name as any} size={size} color={color} />
+    : <Feather name={name as any} size={size} color={color} />;
+}
+
 const ALL_QUESTIONS = DIMENSION_GROUPS.flatMap(g =>
   g.questions.map(q => ({
     ...q,
-    dimColor:    g.color,
-    dimBg:       g.bgColor,
-    dimEmoji:    g.emoji,
-    dimName:     g.name,
-    dimGradient: Colors.riasecGradient[g.dimension] ?? Colors.primaryGradient,
+    dimColor:      g.color,
+    dimBg:         g.bgColor,
+    dimIconFamily: g.iconFamily,
+    dimIconName:   g.iconName,
+    dimName:       g.name,
+    dimGradient:   Colors.riasecGradient[g.dimension] ?? Colors.primaryGradient,
   })),
 );
 
 const TOTAL = ALL_QUESTIONS.length;
 
-const OPTIONS = [
-  { value: 1, label: 'Não gostaria nada', emoji: '😣' },
-  { value: 2, label: 'Não gostaria',       emoji: '😕' },
-  { value: 3, label: 'Neutro',             emoji: '😐' },
-  { value: 4, label: 'Gostaria',           emoji: '🙂' },
-  { value: 5, label: 'Gostaria muito',     emoji: '😄' },
+const OPTIONS: { value: number; label: string; family: IconFamily; icon: string }[] = [
+  { value: 1, label: 'Não gostaria nada', family: 'Ionicons', icon: 'sad-outline' },
+  { value: 2, label: 'Não gostaria',       family: 'Ionicons', icon: 'thumbs-down-outline' },
+  { value: 3, label: 'Neutro',             family: 'Feather',  icon: 'minus-circle' },
+  { value: 4, label: 'Gostaria',           family: 'Ionicons', icon: 'thumbs-up-outline' },
+  { value: 5, label: 'Gostaria muito',     family: 'Ionicons', icon: 'happy-outline' },
 ];
 
 export default function QuestionScreen({ navigation }: Props) {
@@ -111,7 +119,7 @@ export default function QuestionScreen({ navigation }: Props) {
 
       <View style={[styles.topBar, { paddingTop: insets.top + Spacing.sm }]}>
         <TouchableOpacity style={styles.backBtn} onPress={handleBack}>
-          <Text style={styles.backIcon}>←</Text>
+          <Feather name="arrow-left" size={18} color={C.text} />
         </TouchableOpacity>
         <View style={styles.progressTrack}>
           <Animated.View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: q.dimColor }]} />
@@ -121,7 +129,7 @@ export default function QuestionScreen({ navigation }: Props) {
 
       <View style={styles.dimBadgeRow}>
         <View style={[styles.dimBadge, { backgroundColor: `${q.dimColor}20`, borderColor: `${q.dimColor}40` }]}>
-          <Text style={styles.dimEmoji}>{q.dimEmoji}</Text>
+          <DimIcon family={q.dimIconFamily} name={q.dimIconName} size={16} color={q.dimColor} />
           <Text style={[styles.dimName, { color: q.dimColor }]}>{q.dimName}</Text>
           <Text style={styles.dimProgress}>· {dimQ}/8</Text>
         </View>
@@ -149,11 +157,13 @@ export default function QuestionScreen({ navigation }: Props) {
                 {isSelected && (
                   <LinearGradient colors={[`${q.dimColor}25`, `${q.dimColor}08`]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={StyleSheet.absoluteFill} />
                 )}
-                <Text style={styles.optionEmoji}>{opt.emoji}</Text>
+                <View style={styles.optionIconWrap}>
+                  <DimIcon family={opt.family} name={opt.icon} size={20} color={isSelected ? q.dimColor : C.textSecondary} />
+                </View>
                 <Text style={[styles.optionLabel, isSelected && { color: q.dimColor, fontWeight: '700' }]}>{opt.label}</Text>
                 {isSelected && (
                   <View style={[styles.checkMark, { backgroundColor: q.dimColor }]}>
-                    <Text style={styles.checkIcon}>✓</Text>
+                    <Feather name="check" size={12} color="#FFF" />
                   </View>
                 )}
               </TouchableOpacity>
@@ -170,14 +180,12 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
 
   topBar:        { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.lg, paddingBottom: Spacing.md, gap: Spacing.md },
   backBtn:       { width: 36, height: 36, borderRadius: 18, backgroundColor: C.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.border },
-  backIcon:      { fontSize: 18, color: C.text },
   progressTrack: { flex: 1, height: 5, backgroundColor: C.surface, borderRadius: Radius.full, overflow: 'hidden' },
   progressFill:  { height: '100%', borderRadius: Radius.full },
   progressLabel: { fontSize: Typography.sm, fontWeight: '700', color: C.textMuted, width: 36, textAlign: 'right' },
 
   dimBadgeRow: { paddingHorizontal: Spacing.lg, marginTop: Spacing.xs },
   dimBadge:    { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, alignSelf: 'flex-start', paddingHorizontal: Spacing.md, paddingVertical: 6, borderRadius: Radius.full, borderWidth: 1 },
-  dimEmoji:    { fontSize: 16 },
   dimName:     { fontSize: Typography.sm, fontWeight: '700' },
   dimProgress: { fontSize: Typography.sm, color: C.textMuted },
 
@@ -190,8 +198,7 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   optionsWrap:    { paddingHorizontal: Spacing.lg, gap: Spacing.sm },
   option:         { flexDirection: 'row', alignItems: 'center', backgroundColor: C.card, borderRadius: Radius.lg, padding: Spacing.md, gap: Spacing.md, borderWidth: 1, borderColor: C.border, overflow: 'hidden', minHeight: 52 },
   optionSelected: { borderWidth: 1.5, ...Shadow.sm },
-  optionEmoji:    { fontSize: 22, width: 28, textAlign: 'center' },
+  optionIconWrap: { width: 28, alignItems: 'center' },
   optionLabel:    { flex: 1, fontSize: Typography.base, color: C.textSecondary, fontWeight: '500' },
   checkMark:      { width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
-  checkIcon:      { fontSize: 12, color: '#FFF', fontWeight: '700' },
 });

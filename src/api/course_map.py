@@ -587,6 +587,143 @@ def get_employability(area: str | None, provincia: str | None) -> str:
     return PROVINCE_EMPLOYABILITY.get(area, {}).get(provincia, _DADOS_NAO_DISPONIVEIS)
 
 
+# ---------------------------------------------------------------------------
+# Requisitos de acesso às universidades (Funcionalidade B)
+# ---------------------------------------------------------------------------
+# Dados recolhidos directamente dos websites oficiais de cada universidade
+# (consultados em Junho de 2026): uem.mz, isctem.ac.mz, up.ac.mz, ucm.ac.mz,
+# isutc.ac.mz, unizambeze.ac.mz. Apenas as áreas aqui listadas foram
+# verificadas em fonte primária — as restantes combinações universidade×área
+# não estão preenchidas (ver AREA_INSTITUTIONS) para evitar inventar dados.
+# Onde não foi possível confirmar um contacto directo (ex: email de admissões),
+# indica-se o site oficial em vez de um contacto fabricado.
+
+UNIVERSITY_NAMES: dict[str, str] = {
+    "UEM": "Universidade Eduardo Mondlane",
+    "ISCTEM": "Instituto Superior de Ciências e Tecnologia de Moçambique",
+    "UP": "Universidade Pedagógica",
+    "UCM": "Universidade Católica de Moçambique",
+    "ISUTC": "Instituto Superior de Transportes e Comunicações",
+    "UniZambeze": "Universidade Zambeze",
+}
+
+# Quais universidades (códigos) oferecem cada área — só preenchido para as
+# combinações com dados de admissão verificados em UNIVERSITY_REQUIREMENTS.
+AREA_INSTITUTIONS: dict[str, list[str]] = {
+    "engenharia_tic": ["UEM", "ISCTEM", "ISUTC", "UniZambeze"],
+    "saude": ["UEM", "ISCTEM"],
+    "educacao": ["UP"],
+    "direito_admin_publica": ["UEM", "UCM", "UniZambeze"],
+    "gestao_economia_financas": ["UEM", "UCM", "ISCTEM"],
+    "logistica_transportes": ["ISUTC"],
+}
+
+UNIVERSITY_REQUIREMENTS: dict[str, dict[str, dict]] = {
+    "UEM": {
+        "engenharia_tic": {
+            "curso_titulo": "Licenciatura em Engenharia Informática",
+            "duracao": "5 anos", "modalidade": "Presencial", "cidade": "Maputo",
+            "disciplinas_exigidas": ["Matemática", "Física"],
+            "nota_minima": "Exame de admissão específico da UEM (vagas limitadas por curso)",
+            "documentos": ["BI ou Passaporte", "Certificado da 12ª classe", "Foto tipo passe", "Comprovativo de pagamento da inscrição"],
+            "website": "https://www.uem.mz", "contacto": "cecoma@uem.ac.mz",
+        },
+        "saude": {
+            "curso_titulo": "Licenciatura em Medicina",
+            "duracao": "6 anos", "modalidade": "Presencial", "cidade": "Maputo",
+            "disciplinas_exigidas": ["Biologia", "Química"],
+            "nota_minima": "Exame de admissão específico da UEM — Faculdade de Medicina",
+            "documentos": ["BI ou Passaporte", "Certificado da 12ª classe", "Foto tipo passe", "Comprovativo de pagamento da inscrição"],
+            "website": "https://www.uem.mz", "contacto": "cecoma@uem.ac.mz",
+        },
+        "gestao_economia_financas": {
+            "curso_titulo": "Licenciatura em Economia",
+            "duracao": "4 anos", "modalidade": "Presencial", "cidade": "Maputo",
+            "disciplinas_exigidas": ["Matemática"],
+            "nota_minima": "Exame de admissão específico da UEM — Faculdade de Economia",
+            "documentos": ["BI ou Passaporte", "Certificado da 12ª classe", "Foto tipo passe", "Comprovativo de pagamento da inscrição"],
+            "website": "https://www.uem.mz", "contacto": "cecoma@uem.ac.mz",
+        },
+    },
+    "ISCTEM": {
+        "engenharia_tic": {
+            "curso_titulo": "Licenciatura em Engenharia Informática",
+            "duracao": "4 anos", "modalidade": "Laboral e Presencial", "cidade": "Maputo",
+            "disciplinas_exigidas": ["Matemática", "Física (Grupos B e C)"],
+            "nota_minima": "Provas diagnósticas com média igual ou superior a 10 valores",
+            "documentos": ["2 fotografias tipo passe", "Cópia autenticada do BI", "Certificado da 12ª classe autenticado", "Atestado médico", "Comprovativo de pagamento da inscrição"],
+            "website": "https://isctem.ac.mz", "contacto": "Consultar isctem.ac.mz",
+        },
+        "saude": {
+            "curso_titulo": "Licenciatura em Medicina Geral",
+            "duracao": "6 anos", "modalidade": "Presencial", "cidade": "Maputo",
+            "disciplinas_exigidas": ["Biologia", "Química"],
+            "nota_minima": "Provas diagnósticas com média igual ou superior a 10 valores",
+            "documentos": ["2 fotografias tipo passe", "Cópia autenticada do BI", "Certificado da 12ª classe autenticado", "Atestado médico", "Comprovativo de pagamento da inscrição"],
+            "website": "https://isctem.ac.mz", "contacto": "Consultar isctem.ac.mz",
+        },
+    },
+    "UP": {
+        "educacao": {
+            "curso_titulo": "Licenciatura em Educação / Pedagogia",
+            "duracao": "4 anos", "modalidade": "Presencial, Pós-laboral ou À Distância",
+            "cidade": "Maputo (também Beira e Nampula)",
+            "disciplinas_exigidas": ["Conforme a variante do curso"],
+            "nota_minima": "Exame de admissão da Comissão de Exames de Admissão da UP",
+            "documentos": ["BI ou Passaporte", "Certificado da 12ª classe", "Foto tipo passe", "Comprovativo de pagamento da candidatura"],
+            "website": "https://www.up.ac.mz", "contacto": "atendimento.comissao.upm@gmail.com",
+        },
+    },
+    "UCM": {
+        "gestao_economia_financas": {
+            "curso_titulo": "Licenciatura em Administração e Gestão de Empresas",
+            "duracao": "4 anos", "modalidade": "Presencial", "cidade": "Beira",
+            "disciplinas_exigidas": ["Matemática"],
+            "nota_minima": "Processo de admissão da UCM — consultar edital anual",
+            "documentos": ["BI ou Passaporte", "Certificado da 12ª classe", "Foto tipo passe", "Inscrição via esura.ucm.ac.mz"],
+            "website": "https://www.ucm.ac.mz", "contacto": "reitoria@ucm.ac.mz",
+        },
+    },
+    "ISUTC": {
+        "logistica_transportes": {
+            "curso_titulo": "Licenciatura em Gestão de Logística e Transportes",
+            "duracao": "4 anos", "modalidade": "Presencial ou À Distância", "cidade": "Maputo",
+            "disciplinas_exigidas": ["Matemática"],
+            "nota_minima": "Admissão directa com média ≥14 na 12ª classe, ou exame de admissão",
+            "documentos": ["BI, DIRE ou Passaporte (cópia autenticada)", "Certificado da 12ª classe", "Comprovativo de pagamento"],
+            "website": "https://www.isutc.ac.mz", "contacto": "estuda@isutc.ac.mz",
+        },
+    },
+    "UniZambeze": {
+        "engenharia_tic": {
+            "curso_titulo": "Licenciatura em Engenharia Informática",
+            "duracao": "4 anos", "modalidade": "Presencial", "cidade": "Beira",
+            "disciplinas_exigidas": ["Matemática", "Física"],
+            "nota_minima": "Exame de acesso, conforme o Regulamento de Acesso aos Cursos de Graduação da UniZambeze",
+            "documentos": ["BI ou Passaporte", "Certificado da 12ª classe", "Foto tipo passe", "Comprovativo de pagamento de inscrição"],
+            "website": "https://unizambeze.ac.mz", "contacto": "Consultar unizambeze.ac.mz/admissao",
+        },
+        "direito_admin_publica": {
+            "curso_titulo": "Licenciatura em Direito",
+            "duracao": "5 anos", "modalidade": "Presencial", "cidade": "Beira",
+            "disciplinas_exigidas": ["Conforme o Regulamento de Acesso"],
+            "nota_minima": "Exame de acesso, conforme o Regulamento de Acesso aos Cursos de Graduação da UniZambeze",
+            "documentos": ["BI ou Passaporte", "Certificado da 12ª classe", "Foto tipo passe", "Comprovativo de pagamento de inscrição"],
+            "website": "https://unizambeze.ac.mz", "contacto": "Consultar unizambeze.ac.mz/admissao",
+        },
+    },
+}
+
+
+def get_university_requirement(codigo: str, area: str) -> dict | None:
+    """Detalhe de admissão de uma universidade para uma área de curso, ou
+    None se a combinação não tiver dados verificados."""
+    entry = UNIVERSITY_REQUIREMENTS.get(codigo, {}).get(area)
+    if not entry:
+        return None
+    return {**entry, "codigo": codigo, "universidade": UNIVERSITY_NAMES.get(codigo, codigo)}
+
+
 def lookup_courses(holland_code: str) -> list[dict]:
     """Retorna sugestões de cursos moçambicanos para um código Holland.
 

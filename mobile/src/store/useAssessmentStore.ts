@@ -12,7 +12,11 @@ interface AssessmentState {
   demographics: Demographics | null;
   results:      PredictionResponse | null;
   history:      AssessmentRecord[];
+  favorites:    string[]; // chaves "codigo:area" de universidades guardadas
   isSyncing:    boolean;
+
+  toggleFavorite: (key: string) => void;
+  isFavorite:     (key: string) => boolean;
 
   setAnswer:      (code: string, value: number) => void;
   setDemographics:(data: Demographics) => void;
@@ -39,7 +43,17 @@ export const useAssessmentStore = create<AssessmentState>()(
       demographics: null,
       results:      null,
       history:      [],
+      favorites:    [],
       isSyncing:    false,
+
+      toggleFavorite: (key) =>
+        set(s => ({
+          favorites: s.favorites.includes(key)
+            ? s.favorites.filter(k => k !== key)
+            : [...s.favorites, key],
+        })),
+
+      isFavorite: (key) => get().favorites.includes(key),
 
       setAnswer: (code, value) =>
         set(s => ({ answers: { ...s.answers, [code]: value } })),
@@ -117,7 +131,7 @@ export const useAssessmentStore = create<AssessmentState>()(
     {
       name:    'assessment-store',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (s) => ({ history: s.history }),
+      partialize: (s) => ({ history: s.history, favorites: s.favorites }),
     },
   ),
 );

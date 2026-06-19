@@ -3,29 +3,36 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { AppStackParamList } from '../../types';
+import { AppStackParamList, IconFamily } from '../../types';
 import { useAuthStore }       from '../../store/useAuthStore';
 import { useAssessmentStore } from '../../store/useAssessmentStore';
 import { useColors, ColorsType, Colors, Spacing, Radius, Typography, Shadow } from '../../theme';
 
 type Nav = NativeStackNavigationProp<AppStackParamList>;
 
+function DimIcon({ family, name, size, color }: { family: IconFamily; name: string; size: number; color: string }) {
+  return family === 'Ionicons'
+    ? <Ionicons name={name as any} size={size} color={color} />
+    : <Feather name={name as any} size={size} color={color} />;
+}
+
 const RIASEC_INFO = [
-  { letter: 'R', name: 'Realista',      emoji: '🔧', color: Colors.riasec.R,
+  { letter: 'R', name: 'Realista',      iconFamily: 'Feather' as IconFamily,  iconName: 'tool',                  color: Colors.riasec.R,
     desc: 'Prefere trabalho prático e manual. Gosta de construir, reparar e operar máquinas.' },
-  { letter: 'I', name: 'Investigativo', emoji: '🔬', color: Colors.riasec.I,
+  { letter: 'I', name: 'Investigativo', iconFamily: 'Ionicons' as IconFamily, iconName: 'flask-outline',         color: Colors.riasec.I,
     desc: 'Orientado para análise científica. Gosta de resolver problemas complexos e pesquisar.' },
-  { letter: 'A', name: 'Artístico',     emoji: '🎨', color: Colors.riasec.A,
+  { letter: 'A', name: 'Artístico',     iconFamily: 'Ionicons' as IconFamily, iconName: 'color-palette-outline', color: Colors.riasec.A,
     desc: 'Criativo e expressivo. Valoriza arte, música, escrita e expressão cultural.' },
-  { letter: 'S', name: 'Social',        emoji: '🤝', color: Colors.riasec.S,
+  { letter: 'S', name: 'Social',        iconFamily: 'Feather' as IconFamily,  iconName: 'users',                  color: Colors.riasec.S,
     desc: 'Orientado para pessoas. Gosta de ajudar, ensinar e trabalhar em equipa.' },
-  { letter: 'E', name: 'Empreendedor',  emoji: '💼', color: Colors.riasec.E,
+  { letter: 'E', name: 'Empreendedor',  iconFamily: 'Feather' as IconFamily,  iconName: 'briefcase',              color: Colors.riasec.E,
     desc: 'Motivado por liderança e negócios. Gosta de persuadir e gerir pessoas.' },
-  { letter: 'C', name: 'Convencional',  emoji: '📊', color: Colors.riasec.C,
+  { letter: 'C', name: 'Convencional',  iconFamily: 'Feather' as IconFamily,  iconName: 'bar-chart-2',            color: Colors.riasec.C,
     desc: 'Metódico e organizado. Valoriza dados, procedimentos e ambientes estruturados.' },
 ];
 
@@ -70,7 +77,7 @@ export default function HomeScreen() {
         <LinearGradient colors={Colors.heroGradient} style={[styles.hero, { paddingTop: insets.top + Spacing.lg }]}>
           <Animated.View style={[styles.greetRow, { opacity: fadeAnim, transform: [{ translateY: heroAnim }] }]}>
             <View style={styles.greetLeft}>
-              <Text style={styles.greetText}>{greet}, {firstName} 👋</Text>
+              <Text style={styles.greetText}>{greet}, {firstName}</Text>
               <Text style={styles.greetSub}>Pronto para descobrir o teu caminho?</Text>
             </View>
             <View style={styles.avatar}>
@@ -99,7 +106,7 @@ export default function HomeScreen() {
             <View style={styles.ctaCircle1} />
             <View style={styles.ctaCircle2} />
             <View style={styles.ctaContent}>
-              <Text style={styles.ctaEmoji}>🎯</Text>
+              <Feather name="target" size={36} color="#FFF" />
               <Text style={styles.ctaTitle}>{history.length === 0 ? 'Iniciar avaliação' : 'Nova avaliação'}</Text>
               <Text style={styles.ctaDesc}>48 perguntas · 6 dimensões RIASEC · ~8 min</Text>
               <TouchableOpacity style={styles.ctaBtn} onPress={() => navigation.navigate('AssessmentIntro')} activeOpacity={0.9}>
@@ -122,7 +129,7 @@ export default function HomeScreen() {
                   <Text style={styles.resultCareers} numberOfLines={1}>{lastResult.careers.map(c => c.titulo).join(' · ')}</Text>
                 </View>
               </View>
-              <Text style={styles.resultArrow}>›</Text>
+              <Feather name="chevron-right" size={22} color={Colors.textMuted} />
             </TouchableOpacity>
           </View>
         )}
@@ -139,10 +146,10 @@ export default function HomeScreen() {
                   style={[styles.dimCard, { backgroundColor: Colors.riasecBg[d.letter] }, isActive && { borderColor: d.color, borderWidth: 1.5 }]}
                   onPress={() => toggleDim(d.letter)} activeOpacity={0.75}
                 >
-                  <Text style={styles.dimEmoji}>{d.emoji}</Text>
+                  <DimIcon family={d.iconFamily} name={d.iconName} size={26} color={d.color} />
                   <Text style={[styles.dimLetter, { color: d.color }]}>{d.letter}</Text>
                   <Text style={styles.dimName}>{d.name}</Text>
-                  {isActive && <Text style={[styles.dimArrow, { color: d.color }]}>▲</Text>}
+                  {isActive && <Feather name="chevron-up" size={10} color={d.color} />}
                 </TouchableOpacity>
               );
             })}
@@ -151,7 +158,7 @@ export default function HomeScreen() {
             const d = RIASEC_INFO.find(x => x.letter === activeDim)!;
             return (
               <Animated.View style={[styles.dimDetail, { borderColor: d.color + '50', backgroundColor: Colors.riasecBg[d.letter] }, { opacity: detailAnim, transform: [{ translateY: detailAnim.interpolate({ inputRange: [0, 1], outputRange: [-8, 0] }) }] }]}>
-                <Text style={styles.dimDetailEmoji}>{d.emoji}</Text>
+                <DimIcon family={d.iconFamily} name={d.iconName} size={26} color={d.color} />
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.dimDetailTitle, { color: d.color }]}>{d.letter} — {d.name}</Text>
                   <Text style={styles.dimDetailDesc}>{d.desc}</Text>
@@ -165,12 +172,14 @@ export default function HomeScreen() {
           <Text style={styles.sectionTitle}>Como funciona</Text>
           <View style={styles.infoList}>
             {[
-              { icon: '📝', title: '48 perguntas', desc: 'Avalia a tua preferência por diferentes atividades profissionais' },
-              { icon: '🧠', title: 'IA preditiva', desc: 'Modelo treinado com 145 mil respondentes para máxima precisão' },
-              { icon: '🎓', title: 'Carreiras sugeridas', desc: 'Recebe sugestões personalizadas com base no teu perfil único' },
+              { family: 'Feather' as IconFamily,  icon: 'edit-3',          title: '48 perguntas', desc: 'Avalia a tua preferência por diferentes atividades profissionais' },
+              { family: 'Feather' as IconFamily,  icon: 'cpu',             title: 'IA preditiva', desc: 'Modelo treinado com 145 mil respondentes para máxima precisão' },
+              { family: 'Ionicons' as IconFamily, icon: 'school-outline',  title: 'Carreiras sugeridas', desc: 'Recebe sugestões personalizadas com base no teu perfil único' },
             ].map((item) => (
               <View key={item.title} style={[styles.infoCard, Shadow.sm]}>
-                <Text style={styles.infoIcon}>{item.icon}</Text>
+                <View style={styles.infoIconWrap}>
+                  <DimIcon family={item.family} name={item.icon} size={22} color={Colors.primaryLight} />
+                </View>
                 <View style={styles.infoText}>
                   <Text style={styles.infoTitle}>{item.title}</Text>
                   <Text style={styles.infoDesc}>{item.desc}</Text>
@@ -235,19 +244,16 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
 
   dimGrid:        { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   dimCard:        { flexBasis: '30%', flexGrow: 1, borderRadius: Radius.lg, padding: Spacing.md, alignItems: 'center', gap: 4, borderWidth: 1, borderColor: C.border },
-  dimEmoji:       { fontSize: 28 },
   dimLetter:      { fontSize: Typography.xl, fontWeight: '900' },
   dimName:        { fontSize: Typography.xs, color: C.textSecondary, textAlign: 'center' },
-  dimArrow:       { fontSize: 8, marginTop: 2 },
   dimDetail:      { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.md, padding: Spacing.md, borderRadius: Radius.lg, borderWidth: 1 },
-  dimDetailEmoji: { fontSize: 28, marginTop: 2 },
   dimDetailTitle: { fontSize: Typography.base, fontWeight: '800', marginBottom: 4 },
   dimDetailDesc:  { fontSize: Typography.sm, color: C.textSecondary, lineHeight: 20 },
 
-  infoList:  { gap: Spacing.sm },
-  infoCard:  { flexDirection: 'row', alignItems: 'center', backgroundColor: C.card, borderRadius: Radius.lg, padding: Spacing.md, gap: Spacing.md, borderWidth: 1, borderColor: C.border },
-  infoIcon:  { fontSize: 28 },
-  infoText:  { flex: 1, gap: 2 },
+  infoList:     { gap: Spacing.sm },
+  infoCard:     { flexDirection: 'row', alignItems: 'center', backgroundColor: C.card, borderRadius: Radius.lg, padding: Spacing.md, gap: Spacing.md, borderWidth: 1, borderColor: C.border },
+  infoIconWrap: { width: 40, height: 40, borderRadius: Radius.md, backgroundColor: C.primaryGlow, alignItems: 'center', justifyContent: 'center' },
+  infoText:     { flex: 1, gap: 2 },
   infoTitle: { fontSize: Typography.base, fontWeight: '700', color: C.text },
   infoDesc:  { fontSize: Typography.sm, color: C.textSecondary, lineHeight: 18 },
 });

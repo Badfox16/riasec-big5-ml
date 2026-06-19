@@ -3,6 +3,7 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Animated } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors, ColorsType, Spacing, Typography } from '../theme';
 import { TabParamList } from '../types';
@@ -13,10 +14,10 @@ import ProfileScreen from '../screens/main/ProfileScreen';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const TAB_ITEMS: Array<{ name: keyof TabParamList; label: string; icon: string }> = [
-  { name: 'Home',    label: 'Início',    icon: '⌂' },
-  { name: 'History', label: 'Histórico', icon: '◷' },
-  { name: 'Profile', label: 'Perfil',    icon: '◎' },
+const TAB_ITEMS: Array<{ name: keyof TabParamList; label: string; icon: keyof typeof Feather.glyphMap }> = [
+  { name: 'Home',    label: 'Início',    icon: 'home' },
+  { name: 'History', label: 'Histórico', icon: 'clock' },
+  { name: 'Profile', label: 'Perfil',    icon: 'user' },
 ];
 
 function CustomTabBar({ state, navigation }: any) {
@@ -47,7 +48,7 @@ function CustomTabBar({ state, navigation }: any) {
             <TouchableOpacity key={item.name} style={styles.tabItem} onPress={() => navigation.navigate(item.name)} activeOpacity={0.7}>
               <Animated.View style={[styles.activePill, { transform: [{ scaleX: dotScale }, { scaleY: dotScale }] }]} />
               <Animated.View style={[styles.iconWrap, isActive && styles.iconWrapActive, { transform: [{ scale }] }]}>
-                <Text style={[styles.icon, isActive && styles.iconActive]}>{item.icon}</Text>
+                <Feather name={item.icon} size={20} color={isActive ? Colors.tabActive : Colors.tabInactive} />
               </Animated.View>
               <Animated.Text style={[styles.label, isActive && styles.labelActive, { opacity: labelOpacity }]}>
                 {item.label}
@@ -80,8 +81,6 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
   },
   iconWrap:       { width: 40, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   iconWrapActive: { backgroundColor: C.primaryGlow },
-  icon:           { fontSize: 20, color: C.tabInactive },
-  iconActive:     { color: C.tabActive },
   label:          { fontSize: Typography.xs, fontWeight: '500', color: C.tabInactive },
   labelActive:    { color: C.tabActive, fontWeight: '700' },
 });

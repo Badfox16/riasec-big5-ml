@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -14,11 +15,11 @@ import { useColors, ColorsType, Spacing, Radius, Typography } from '../../theme'
 
 type Props = NativeStackScreenProps<AppStackParamList, 'Loading'>;
 
-const STEPS = [
-  { emoji: '📊', text: 'A analisar as tuas respostas…' },
-  { emoji: '🧠', text: 'A calcular o perfil RIASEC…' },
-  { emoji: '🔮', text: 'A prever traços de personalidade…' },
-  { emoji: '🎯', text: 'A identificar carreiras compatíveis…' },
+const STEPS: { icon: keyof typeof Feather.glyphMap; text: string }[] = [
+  { icon: 'bar-chart-2', text: 'A analisar as tuas respostas…' },
+  { icon: 'cpu',          text: 'A calcular o perfil RIASEC…' },
+  { icon: 'compass',      text: 'A prever traços de personalidade…' },
+  { icon: 'target',       text: 'A identificar carreiras compatíveis…' },
 ];
 
 export default function LoadingScreen({ navigation }: Props) {
@@ -97,7 +98,7 @@ export default function LoadingScreen({ navigation }: Props) {
         {isDone ? (
           <Animated.View style={[styles.successCircle, { transform: [{ scale: successAnim.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }], opacity: successAnim }]}>
             <LinearGradient colors={C.accentGradient} style={styles.successGradient}>
-              <Text style={styles.successEmoji}>✓</Text>
+              <Feather name="check" size={36} color="#FFF" />
             </LinearGradient>
           </Animated.View>
         ) : (
@@ -108,16 +109,24 @@ export default function LoadingScreen({ navigation }: Props) {
           </Animated.View>
         )}
 
-        <Animated.Text style={[styles.logo, { transform: [{ scale: pulseAnim }] }]}>🎯</Animated.Text>
+        <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+          <Feather name="target" size={44} color={C.primaryLight} />
+        </Animated.View>
         <Text style={styles.title}>{isDone ? 'Perfil calculado!' : 'A processar…'}</Text>
 
         {!isDone && !errorMsg && (
-          <Animated.Text style={[styles.stepText, { opacity: stepFade }]}>{STEPS[stepIndex].emoji}  {STEPS[stepIndex].text}</Animated.Text>
+          <Animated.View style={[styles.stepRow, { opacity: stepFade }]}>
+            <Feather name={STEPS[stepIndex].icon} size={16} color={C.textSecondary} />
+            <Text style={styles.stepText}>{STEPS[stepIndex].text}</Text>
+          </Animated.View>
         )}
 
         {errorMsg && (
           <View style={styles.errorBox}>
-            <Text style={styles.errorTitle}>⚠  Algo correu mal</Text>
+            <View style={styles.errorTitleRow}>
+              <Feather name="alert-triangle" size={16} color={C.error} />
+              <Text style={styles.errorTitle}>Algo correu mal</Text>
+            </View>
             <Text style={styles.errorMsg}>{errorMsg}</Text>
             <Text style={styles.errorHint}>Verifica se o servidor está disponível em{'\n'}localhost:8000</Text>
           </View>
@@ -153,14 +162,14 @@ const makeStyles = (C: ColorsType) => StyleSheet.create({
 
   successCircle:  { width: 80, height: 80, borderRadius: 40, overflow: 'hidden' },
   successGradient:{ flex: 1, alignItems: 'center', justifyContent: 'center' },
-  successEmoji:   { fontSize: 36, color: '#FFF', fontWeight: '900' },
 
-  logo:     { fontSize: 48 },
   title:    { fontSize: Typography['2xl'], fontWeight: '900', color: C.text, textAlign: 'center' },
+  stepRow:  { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   stepText: { fontSize: Typography.base, color: C.textSecondary, textAlign: 'center' },
 
-  errorBox:   { backgroundColor: C.errorBg, borderRadius: Radius.lg, padding: Spacing.lg, borderWidth: 1, borderColor: C.error + '40', gap: Spacing.sm, alignItems: 'center' },
-  errorTitle: { fontSize: Typography.lg, fontWeight: '800', color: C.error },
+  errorBox:      { backgroundColor: C.errorBg, borderRadius: Radius.lg, padding: Spacing.lg, borderWidth: 1, borderColor: C.error + '40', gap: Spacing.sm, alignItems: 'center' },
+  errorTitleRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
+  errorTitle:    { fontSize: Typography.lg, fontWeight: '800', color: C.error },
   errorMsg:   { fontSize: Typography.base, color: C.error, textAlign: 'center' },
   errorHint:  { fontSize: Typography.sm, color: C.textMuted, textAlign: 'center', lineHeight: 18 },
 

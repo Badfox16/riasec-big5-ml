@@ -21,11 +21,12 @@ from sqlalchemy import inspect, text
 
 from .auth.router import router as auth_router
 from .config import get_settings
+from .course_map import get_university_requirement
 from .db.database import SessionLocal, engine
 from .db.models import Base, User
 from .exams.router import router as exams_router
 from .predict import _load_model, predict
-from .schemas import PredictionResponse, Question, RiasecInput
+from .schemas import PredictionResponse, Question, RiasecInput, UniversityRequirement
 
 _pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -293,3 +294,23 @@ def predict_profile(payload: RiasecInput) -> PredictionResponse:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Erro interno: {exc}") from exc
+
+
+@app.get(
+    "/universities/{codigo}/{area}",
+    response_model=UniversityRequirement,
+    tags=["Universidades"],
+    summary="Requisitos de acesso de uma universidade para uma área de curso",
+)
+def get_university(codigo: str, area: str) -> UniversityRequirement:
+    """
+    Retorna duração, modalidade, disciplinas exigidas, documentos e contactos
+    para a candidatura a uma universidade moçambicana numa área de curso.
+
+    `codigo` e `area` vêm do campo `universidades` e `area` devolvidos por
+    `/predict` em cada curso recomendado.
+    """
+    requirement = get_university_requirement(codigo, area)
+    if not requirement:
+        raise HTTPException(status_code=404, detail="Requisitos não disponíveis para esta universidade/área.")
+    return UniversityRequirement(**requirement)

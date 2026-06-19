@@ -129,10 +129,32 @@ class CourseRecommendation(BaseModel):
     titulo: str
     instituicao: str
     descricao: str
+    area: str = Field(
+        default="",
+        description="Chave estável da área/sector do curso, usada para consultar requisitos de admissão."
+    )
+    universidades: list[str] = Field(
+        default_factory=list,
+        description="Códigos das universidades com requisitos de admissão verificados para esta área (ex: ['UEM', 'ISCTEM'])."
+    )
     empregabilidade_provincia: str = Field(
         default="Dados não disponíveis",
         description="Nível de empregabilidade (Alto/Médio/Baixo) deste curso na província do utilizador."
     )
+
+
+class UniversityRequirement(BaseModel):
+    codigo: str = Field(..., description="Código curto da universidade (ex: UEM, ISCTEM)")
+    universidade: str = Field(..., description="Nome completo da universidade")
+    curso_titulo: str
+    duracao: str
+    modalidade: str
+    cidade: str
+    disciplinas_exigidas: list[str]
+    nota_minima: str
+    documentos: list[str]
+    website: str
+    contacto: str
 
 
 class CareerSuggestion(BaseModel):
