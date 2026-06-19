@@ -33,7 +33,7 @@ export default function ResultsScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
   const C      = useColors();
   const styles = useMemo(() => makeStyles(C), [C]);
-  const { results, reset } = useAssessmentStore();
+  const { results, demographics, reset } = useAssessmentStore();
 
   const heroAnim     = useRef(new Animated.Value(0)).current;
   const section1Anim = useRef(new Animated.Value(40)).current;
@@ -121,7 +121,7 @@ export default function ResultsScreen({ navigation }: Props) {
             <Text style={{ color: accentColor, fontWeight: '800' }}>{holland_code}</Text>
           </Text>
           <View style={styles.careersWrap}>
-            {courses.map((c, i) => <CourseCard key={i} course={c} index={i} accentColor={accentColor} />)}
+            {courses.map((c, i) => <CourseCard key={i} course={c} index={i} accentColor={accentColor} provincia={demographics?.provincia} />)}
           </View>
         </Animated.View>
 

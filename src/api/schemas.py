@@ -129,6 +129,10 @@ class CourseRecommendation(BaseModel):
     titulo: str
     instituicao: str
     descricao: str
+    empregabilidade_provincia: str = Field(
+        default="Dados não disponíveis",
+        description="Nível de empregabilidade (Alto/Médio/Baixo) deste curso na província do utilizador."
+    )
 
 
 class CareerSuggestion(BaseModel):

@@ -62,6 +62,7 @@ export interface CourseRecommendation {
   titulo: string;
   instituicao: string;
   descricao: string;
+  empregabilidade_provincia: string;
 }
 
 export interface CareerSuggestion {

@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 
 from .career_map import DIMENSION_DESCRIPTIONS, lookup_careers
-from .course_map import lookup_courses
+from .course_map import get_employability, lookup_courses
 from .schemas import (
     Big5Prediction,
     CareerSuggestion,
@@ -160,7 +160,13 @@ def predict(payload: RiasecInput) -> PredictionResponse:
     ]
 
     courses_raw = lookup_courses(holland_code)
-    courses = [CourseRecommendation(**c) for c in courses_raw]
+    courses = [
+        CourseRecommendation(
+            **c,
+            empregabilidade_provincia=get_employability(c.get("area"), payload.provincia),
+        )
+        for c in courses_raw
+    ]
 
     careers_raw = lookup_careers(holland_code)
     careers = [CareerSuggestion(**c) for c in careers_raw]
