@@ -591,8 +591,9 @@ def get_employability(area: str | None, provincia: str | None) -> str:
 # Requisitos de acesso às universidades (Funcionalidade B)
 # ---------------------------------------------------------------------------
 # Dados recolhidos directamente dos websites oficiais de cada universidade
-# (consultados em Junho de 2026): uem.mz, isctem.ac.mz, up.ac.mz, ucm.ac.mz,
-# isutc.ac.mz, unizambeze.ac.mz. Apenas as áreas aqui listadas foram
+# (consultados em Junho de 2026, revisto em Julho de 2026): uem.mz,
+# isctem.ac.mz, up.ac.mz, ucm.ac.mz, isutc.ac.mz, unizambeze.ac.mz.
+# Apenas as áreas aqui listadas foram
 # verificadas em fonte primária — as restantes combinações universidade×área
 # não estão preenchidas (ver AREA_INSTITUTIONS) para evitar inventar dados.
 # Onde não foi possível confirmar um contacto directo (ex: email de admissões),
@@ -610,10 +611,10 @@ UNIVERSITY_NAMES: dict[str, str] = {
 # Quais universidades (códigos) oferecem cada área — só preenchido para as
 # combinações com dados de admissão verificados em UNIVERSITY_REQUIREMENTS.
 AREA_INSTITUTIONS: dict[str, list[str]] = {
-    "engenharia_tic": ["UEM", "ISCTEM", "ISUTC", "UniZambeze"],
+    "engenharia_tic": ["UEM", "ISCTEM", "UniZambeze"],
     "saude": ["UEM", "ISCTEM"],
     "educacao": ["UP"],
-    "direito_admin_publica": ["UEM", "UCM", "UniZambeze"],
+    "direito_admin_publica": ["UEM", "UniZambeze"],
     "gestao_economia_financas": ["UEM", "UCM", "ISCTEM"],
     "logistica_transportes": ["ISUTC"],
 }
@@ -644,6 +645,14 @@ UNIVERSITY_REQUIREMENTS: dict[str, dict[str, dict]] = {
             "documentos": ["BI ou Passaporte", "Certificado da 12ª classe", "Foto tipo passe", "Comprovativo de pagamento da inscrição"],
             "website": "https://www.uem.mz", "contacto": "cecoma@uem.ac.mz",
         },
+        "direito_admin_publica": {
+            "curso_titulo": "Licenciatura em Direito",
+            "duracao": "5 anos", "modalidade": "Presencial", "cidade": "Maputo",
+            "disciplinas_exigidas": ["Conforme o Regulamento de Acesso"],
+            "nota_minima": "Exame de admissão específico da UEM — Faculdade de Direito",
+            "documentos": ["BI ou Passaporte", "Certificado da 12ª classe", "Foto tipo passe", "Comprovativo de pagamento da inscrição"],
+            "website": "https://www.uem.mz", "contacto": "cecoma@uem.ac.mz",
+        },
     },
     "ISCTEM": {
         "engenharia_tic": {
@@ -660,6 +669,14 @@ UNIVERSITY_REQUIREMENTS: dict[str, dict[str, dict]] = {
             "disciplinas_exigidas": ["Biologia", "Química"],
             "nota_minima": "Provas diagnósticas com média igual ou superior a 10 valores",
             "documentos": ["2 fotografias tipo passe", "Cópia autenticada do BI", "Certificado da 12ª classe autenticado", "Atestado médico", "Comprovativo de pagamento da inscrição"],
+            "website": "https://isctem.ac.mz", "contacto": "Consultar isctem.ac.mz",
+        },
+        "gestao_economia_financas": {
+            "curso_titulo": "Licenciatura em Gestão de Empresas",
+            "duracao": "4 anos", "modalidade": "Laboral e Presencial", "cidade": "Maputo",
+            "disciplinas_exigidas": ["Matemática"],
+            "nota_minima": "Provas diagnósticas com média igual ou superior a 10 valores",
+            "documentos": ["2 fotografias tipo passe", "Cópia autenticada do BI", "Certificado da 12ª classe autenticado", "NUIT", "Comprovativo de pagamento da inscrição"],
             "website": "https://isctem.ac.mz", "contacto": "Consultar isctem.ac.mz",
         },
     },
