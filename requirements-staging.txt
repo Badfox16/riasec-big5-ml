@@ -1,0 +1,35 @@
+# Staging / runtime — apenas o necessário para correr a API (src/api)
+# com o modelo já treinado (notebooks/models/riasec_tipi_et_tuned.pkl).
+#
+#   pip install -r requirements-staging.txt
+#   uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --workers 2
+#
+# NÃO inclui: jupyter/ipython, matplotlib, seaborn, fastapi-cli, sentry-sdk
+# (só necessários para treinar o modelo ou para desenvolvimento).
+
+# --- Web framework -----------------------------------------------------
+fastapi==0.135.1
+starlette==0.52.1              # pin: fastapi 0.135 aceita starlette 1.x, mas
+                               # o ambiente de dev corre 0.52.1 — mantém igual
+uvicorn==0.41.0
+pydantic==2.12.5
+pydantic-settings==2.13.1
+email-validator==2.3.0        # pydantic.EmailStr em auth/router.py
+
+# --- Auth --------------------------------------------------------------
+passlib[bcrypt]>=1.7.4
+bcrypt==4.0.1                 # pin: passlib 1.7.x quebra com bcrypt >= 4.1
+python-jose[cryptography]>=3.3.0
+
+# --- Base de dados -----------------------------------------------------
+sqlalchemy>=2.0
+# psycopg2-binary==2.9.10     # descomentar se DATABASE_URL for PostgreSQL
+
+# --- Inferência (desserializar e correr o .pkl) ------------------------
+# scikit-learn TEM de coincidir com a versão usada no treino, senão o
+# joblib.load falha ou dá resultados inconsistentes.
+scikit-learn==1.8.0
+joblib==1.5.3
+numpy==2.4.2
+pandas==3.0.1
+scipy==1.17.1
