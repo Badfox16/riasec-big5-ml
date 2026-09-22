@@ -60,16 +60,19 @@ python -m venv .env
 ```
 
 **Linux / macOS (bash/zsh):**
+
 ```bash
 source .env/bin/activate
 ```
 
 **Linux / macOS (fish shell):**
+
 ```fish
 source .env/bin/activate.fish
 ```
 
 **Windows:**
+
 ```bat
 .env\Scripts\activate
 ```
@@ -123,13 +126,13 @@ uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --workers 2
 
 ## Endpoints
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| `GET` | `/health` | Estado da API e disponibilidade do modelo |
-| `GET` | `/questions` | Lista das 18 perguntas com escala e labels |
-| `POST` | `/predict` | Previsão do perfil vocacional |
-| `GET` | `/docs` | Swagger UI interativo (gerado automaticamente) |
-| `GET` | `/redoc` | Documentação ReDoc alternativa |
+| Método  | Rota           | Descrição                                    |
+| -------- | -------------- | ---------------------------------------------- |
+| `GET`  | `/health`    | Estado da API e disponibilidade do modelo      |
+| `GET`  | `/questions` | Lista das 18 perguntas com escala e labels     |
+| `POST` | `/predict`   | Previsão do perfil vocacional                 |
+| `GET`  | `/docs`      | Swagger UI interativo (gerado automaticamente) |
+| `GET`  | `/redoc`     | Documentação ReDoc alternativa               |
 
 ### `GET /health`
 
@@ -178,6 +181,7 @@ curl http://localhost:8000/questions
   ...
 ]
 ```
+
 </details>
 
 ---
@@ -188,17 +192,17 @@ Recebe as respostas ao questionário e demográficos opcionais. Retorna código 
 
 **Body (application/json):**
 
-| Campo | Tipo | Obrigatório | Descrição |
-|-------|------|-------------|-----------|
-| `R2`, `R4`, `R6` | int (1–5) | ✅ | Dimensão Realista |
-| `I1`, `I4`, `I7` | int (1–5) | ✅ | Dimensão Investigativa |
-| `A2`, `A4`, `A6` | int (1–5) | ✅ | Dimensão Artística |
-| `S1`, `S5`, `S7` | int (1–5) | ✅ | Dimensão Social |
-| `E3`, `E5`, `E7` | int (1–5) | ✅ | Dimensão Empreendedora |
-| `C1`, `C4`, `C5` | int (1–5) | ✅ | Dimensão Convencional |
-| `age` | int (13–100) | ➖ | Idade (default: 25) |
-| `gender` | int (1–3) | ➖ | 1=Masc, 2=Fem, 3=Outro (default: 1) |
-| `education` | int (1–4) | ➖ | 1=<HS, 2=HS, 3=Licenciatura, 4=Pós-grad (default: 3) |
+| Campo                  | Tipo          | Obrigatório | Descrição                                           |
+| ---------------------- | ------------- | ------------ | ----------------------------------------------------- |
+| `R2`, `R4`, `R6` | int (1–5)    | ✅           | Dimensão Realista                                    |
+| `I1`, `I4`, `I7` | int (1–5)    | ✅           | Dimensão Investigativa                               |
+| `A2`, `A4`, `A6` | int (1–5)    | ✅           | Dimensão Artística                                  |
+| `S1`, `S5`, `S7` | int (1–5)    | ✅           | Dimensão Social                                      |
+| `E3`, `E5`, `E7` | int (1–5)    | ✅           | Dimensão Empreendedora                               |
+| `C1`, `C4`, `C5` | int (1–5)    | ✅           | Dimensão Convencional                                |
+| `age`                | int (13–100) | ➖           | Idade (default: 25)                                   |
+| `gender`             | int (1–3)    | ➖           | 1=Masc, 2=Fem, 3=Outro (default: 1)                   |
+| `education`          | int (1–4)    | ➖           | 1=<HS, 2=HS, 3=Licenciatura, 4=Pós-grad (default: 3) |
 
 ```bash
 curl -X POST http://localhost:8000/predict \
@@ -258,6 +262,7 @@ curl -X POST http://localhost:8000/predict \
   "nota": "Previsão orientativa com base numa amostra de 145 k respondentes. Consulte um psicólogo vocacional para uma avaliação completa."
 }
 ```
+
 </details>
 
 ---
@@ -285,7 +290,5 @@ pip freeze > requirements.txt
 ## Notas técnicas
 
 - **Imputação de itens**: a API coleta 3 itens por dimensão (18 no total) enquanto o modelo foi treinado com 48. Os 5 itens em falta por dimensão são imputados pela média dos 3 observados, mantendo a compatibilidade com o pipeline original. Ver [`docs/model_explainer.md`](docs/model_explainer.md#6-como-a-api-usa-o-modelo) para detalhes.
-
 - **Modelo em memória**: o modelo é carregado uma única vez no arranque via `lru_cache` e reutilizado em todas as chamadas, evitando latência de I/O por pedido.
-
 - **`.gitignore`**: o ficheiro `notebooks/models/` (artefacto treinado) e `.env/` (ambiente virtual) estão excluídos do repositório por serem pesados ou específicos da máquina.
